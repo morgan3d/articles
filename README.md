@@ -1,2 +1,2 @@
-# articles
-Articles on games and graphics.
+# Articles
+Go to https://morgan3d.github.io/articles/
