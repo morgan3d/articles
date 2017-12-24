@@ -33,7 +33,7 @@ Draw this rainbow and cloud.
 Save your rainbow program as `rainbow-animation.p8`.  Your challenge is to make the cloud in
 the picture move from left to right across the screen.
 
-To get you started, here's an example of a small program that makes a circle move from top to
+To get you started, here's an example of a small program that makes a rectangle move from top to
 bottom across the screen. It also cycles.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
@@ -49,11 +49,56 @@ end
 
 function _draw()
  cls(0)
- circ(32, t + 10, 20, 8)
+ rectfill(32, t + 5, 40, t + 20, 20, 8)
 end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Challenge 4: 
+# Challenge 4: Music
+
+Your challenge is to play a song!
+
+Click on the music (note icon) screen of PICO-8. Then, click on the left-most square box
+underneath the word "PATTERN" to activate the first pattern. Next, click on the right-facing
+arrow on the far right of the screen (this means "loop") and finally, click on the tall black
+rectangle that is on the right side of the screen.
+
+![PICO-8 Music Screen](music-ide.png width=300)
+
+Now you're ready to record some music. The recording only advances when you play a note, so
+your timing doesn't matter.
+
+When you play notes, you use the computer keyboard. The Z key on the computer keyboard is the
+note *C* on a piano keyboard. X is the note *D*, which means that S between them is
+*C<sup>#</sup>*.
+
+![PICO-8 Musical Keyboard](music-keys.png width=400)
+
+You don't have to know anything about playing piano. You can just hit random keys if you
+want. Once you've recorded some notes, return to the programming screen and type this to make
+it play the music:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
+function _init()
+ music(0)
+end
+
+function _draw()
+ cls(0)
+ print("playing...")
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you know how play an instrument in real life, then you can use the music
+screen to play a real song. Or you can look up the notes for a song on the
+web. For example, here's [*Twinkle, Twinkle Little Star*](http://www.true-piano-lessons.com/images/xTwinkleinCtab.jpg.jpg.pagespeed.ic.UCZRJsPtSW.jpg).
+
+This challenge didn't have much programming. If you want to polish it, try combining this
+program with your animation from Challenge 3 so that there are pictures and music at the same
+time.
+
+
+# Challenge 5: Sprites
+
 
 <script>markdeepOptions={tocStyle:'medium'};</script>
 <!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
