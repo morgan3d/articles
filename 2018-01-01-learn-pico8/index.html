@@ -1,0 +1,59 @@
+<meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
+         **Learn Game Programming with PICO-8**
+
+# Pedagogy
+
+It is fine to change the Challenge when you are inspired by a different idea. Just make sure
+that what you make is at least as challenging and uses the same new element introduced with
+that challenge. Art works by finding inspiration from challenges and then following the ideas
+that develop. For example, my daughter made a car instead of the cloud for Challenge 2. For
+Challenge 3 she moved the car instead of the cloud.
+
+You are also welcome to explore and use PICO-8 features that you discover in other people's
+programs and in the manual, even if you don't understand them.
+
+
+# Challenge 1: Face
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
+function _draw()
+ cls(0)
+ circ(32,64,20,3)
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+# Challenge 2: Rainbow
+
+Draw this rainbow and cloud.
+
+
+# Challenge 3: Animation
+
+Save your rainbow program as `rainbow-animation.p8`.  Your challenge is to make the cloud in
+the picture move from left to right across the screen.
+
+To get you started, here's an example of a small program that makes a circle move from top to
+bottom across the screen. It also cycles.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
+t = 0
+
+function _update()
+ t = t + 1
+
+ if t > 127 then
+  t = 0
+ end
+end
+
+function _draw()
+ cls(0)
+ circ(32, t + 10, 20, 8)
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Challenge 4: 
+
+<script>markdeepOptions={tocStyle:'medium'};</script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
