@@ -1,19 +1,49 @@
 <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
          **Learn Game Programming with PICO-8**
 
-# Pedagogy
+This article describes a series of activities my own elementary-school children followed to
+learn game programming using [PICO-8](http://pico8.com). Anyone who knows how to read and can
+do basic arithmetic can make video games. Learning game programming is being an artist, 
+an engineer, a detective, and an explorer all at the same time. It is fun and exciting, but also
+requires concentration and determination.
 
-It is fine to change the Challenge when you are inspired by a different idea. Just make sure
-that what you make is at least as challenging and uses the same new element introduced with
-that challenge. Art works by finding inspiration from challenges and then following the ideas
-that develop. For example, my daughter made a car instead of the cloud for Challenge 2. For
-Challenge 3 she moved the car instead of the cloud.
+*For teachers & parents*: You may also be interested in my related
+[article](http://casual-effects.blogspot.ca/2016/06/an-hour-of-code-in-3rd-grade.html) on using
+[TurtleScript](https://casual-effects.com/codeheart/turtle/) in a 3rd grade classroom, and the
+[codeheart.js](https://casual-effects.com/codeheart/) framework I use in teaching high-school
+and college students game programming. Those tools are free and work on any computer (including
+Chromebook and iPad). PICO-8 costs US$15 for a user or site license and only supports a few
+platforms. But, it has the advantage of providing a complete development environment with 
+an editor, paint tool, mapping tool, and music and sound editors.
 
-You are also welcome to explore and use PICO-8 features that you discover in other people's
+
+# Rules
+
+Go through each of the challenges in order. Game programming is creative art. Once you've completed
+a challenge, spend time polishing it to make it your own. Add more pictures and colors and motion
+until you're really proud of it.
+
+To get you started, I'll give you a little example program for each Challenge. My example
+programs don't solve the Challenges. They do have the pieces you need, though. I don't expect
+you to *understand* them, even when you're finished with the challenge. Experiment. Try moving
+the pieces around and changing the numbers. There's nothing bad that you can do. If the program
+breaks, then PICO-8 will tell you which line of code is the problem. You can always just undo
+until it works again. This is the part of programming that makes you an explorer and a detective.
+Once you solve some of the mysteries and figure out what commands do, then you become an engineer
+and can design your programs instead of just experimenting.
+
+You shoul change the Challenge when you are inspired by a different idea. Just make sure that
+what you create uses the same ideas from the original. That way you'll still learn all of the
+key steps. Game design is art and artists find inspiration from challenges, but don't have to
+keep following the rules once they are inspired. They follow the ideas that develop. For
+example, my daughter's Challenge 2 cloud looked like a car. So she created a driving scene
+instead of a rainbox and then made the car drive for the next Challenge.
+
+You are welcome to explore and use PICO-8 features that you discover in other people's
 programs and in the manual, even if you don't understand them.
 
 
-# Challenge 1: Face
+# Challenge 1: Draw a Face
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
 function _draw()
@@ -23,12 +53,12 @@ end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# Challenge 2: Rainbow
+# Challenge 2: Draw a Rainbow
 
 Draw this rainbow and cloud.
 
 
-# Challenge 3: Animation
+# Challenge 3: Animate the Cloud
 
 Save your rainbow program as `rainbow-animation.p8`.  Your challenge is to make the cloud in
 the picture move from left to right across the screen.
@@ -37,23 +67,24 @@ To get you started, here's an example of a small program that makes a rectangle 
 bottom across the screen. It also cycles.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
-t = 0
-
-function _update()
- t = t + 1
-
- if t > 127 then
-  t = 0
- end
-end
+a = 0
 
 function _draw()
+ a = a + 1
+
+ if a > 127 then
+  a = 0
+ end
+
+
  cls(0)
- rectfill(32, t + 5, 40, t + 20, 20, 8)
+ rectfill(32, a + 5, 40, a + 20, 20, 8)
 end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Challenge 4: Music
+
+
+# Challenge 4: Play Music
 
 Your challenge is to play a song!
 
@@ -71,7 +102,7 @@ When you play notes, you use the computer keyboard. The Z key on the computer ke
 note *C* on a piano keyboard. X is the note *D*, which means that S between them is
 *C<sup>#</sup>*.
 
-![PICO-8 Musical Keyboard](music-keys.png width=400)
+![PICO-8 Musical Keyboard. To play the green note, press the purple keyboard key.](music-keys.png width=400)
 
 You don't have to know anything about playing piano. You can just hit random keys if you
 want. Once you've recorded some notes, return to the programming screen and type this to make
@@ -97,8 +128,42 @@ program with your animation from Challenge 3 so that there are pictures and musi
 time.
 
 
-# Challenge 5: Sprites
+# Challenge 5: Animate Sprites
 
+Your challenge is to make an animal that crosses the screen using multiple sprites. It might be
+a bird that flies, a whale that dives, or a hedgehog that crawls, for example.
+
+A "sprite" is a little picture in a video game. These are drawn with an art program instead of
+using circles and rectangles, which makes it easier to have complex shapes. When the game runs,
+the program copies the already-drawn sprites onto the screen. Using many slightly different
+pictures you can make little flipbook sprites that animate and appear to change their shape
+and have motion.
+
+In PICO-8, the cat head lets you switch to the sprite drawing screen. There are a lot of
+sprites.  You should draw in spots 1 and 2 (not 0, the one that starts with an X on it).
+Here's my drawing of a fish in two different poses. Or a bird. It isn't very good:
+
+![A golden fishbird sprite](fish.png)
+
+And here's a program to animate it moving diagonally across the screen:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lua
+-- time
+t = 0
+
+function _draw()
+ t = t + 1
+
+ -- sprite number
+ local s = (t / 10) % 2 + 1
+ spr(s, 128 - t, t)
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now make your own sprite, and put it into the program that you've been working on with the
+rainbow and the cloud. Your sprite should move side to side or top to bottom, not the way that
+mine moves.
 
 <script>markdeepOptions={tocStyle:'medium'};</script>
+<style>h1 {margin-top:50px; padding-bottom:6px; border-bottom: 1px solid #555}</style>
 <!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
