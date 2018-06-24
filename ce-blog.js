@@ -5,8 +5,8 @@ function addBlogRunner() {
 <table><tr valign=top><td><img src="http://casual-effects.com/morgan/headshots/mcguire-square-small.png" width="200px" style="border:1px solid #888"></td><td width="30px"> </td><td>
 <i style="font-size:95%">
 This is a personal blog article by <a href="https://casual-effects.com">Morgan
-McGuire</a>. Morgan is a scientist at NVIDIA and holds faculty appointments at Williams College
-and the University of Waterloo. 
+McGuire</a>. Morgan is a scientist at NVIDIA and holds faculty appointments at Williams College,
+the University of Waterloo, and McGill University.
 
 <p>He is the author of the <a
 href="http://graphicscodex.com">Graphics Codex</a>, an essential reference for computer
