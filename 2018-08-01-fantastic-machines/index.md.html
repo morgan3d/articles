@@ -1,0 +1,57 @@
+fantastic machines
+
+Fantasy console, virtual machine, emulator, etc.
+
+Emulator: simulate a real machine with a software program running on a different machine.
+Typically done for backwards compatibility, e.g., a PS2 emulator running on a PC.
+The emulated machine is often less expressive, lower precision, etc. than the host machine.
+But not always!
+
+For example, also done by processor vendors when simulating their future products. Because Java was originally intended as a language for an embedded Java processor that Sun would produce, the "Java Virtual Machine" isn't a traditional interpreter or runtime, but can be viewed as this class of emulator!
+
+Another example of "emulating upwards" is a common rite of passage course among EECS students:
+building a physical 8-bit machine that then emulates a specific 16- or higher bit (8086, Motorola 68000, and DEC Alpha are common choices).
+
+Virtual machine: software emulating a machine on another machine with comparable architecture, but provisioned differently (e.g., running on a physical machine with more memory) to allow sandboxed instances from multiple users to run simultaneously as if each had full control of the machine.
+This provides security, avoids conflicts between configurations, and enables cost effective server scaling. It also allows migration of whole instances from one physical machine to another while running by serializing the entire VM, which 
+has applications for load balancing and continuous uptime.
+
+Fantasy machine: use a software program running on one machine to simulate one *that never existed*, and that there is no intention of producing. pico8, etc. Generalizing to "machine" from "console"
+
+
+Living the Fantasy
+==============================
+
+Transmeta
+
+Modern Intel and AMD x86 based computers are actually fantasy machines. The baseline x86 architecture does not match how these processors actually operate, and has not for many years.
+The instructions and registers are entirely simulated and the "machine code" of programs is actually interpreted or transcoded at runtime. So, there is a fantasy specification for a modern x86-64 processor using AVX, etc., and there are physical processors that implement that specification through an emulation layer.
+
+Wine: A windows x86 machine running on a linux x86 machine.
+
+OpenGL, DirectX, Vulkan, CUDA assembly/machine code and the machine models described in terms of registers, fixed function units, etc. are an abstraction layer.
+
+Virtual memory
+
+
+
+Video Games
+==============================
+pico8, tic80, etc. for fun
+
+for reasons described above, the GPU and CPU interfaces to modern consoles are in fact fantasy specifications.
+
+Future is cloud fantasy consoles!
+
+
+
+Quantum Computers
+==============================
+
+
+
+
+Artificial Intelligence
+==============================
+
+
