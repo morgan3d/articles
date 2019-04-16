@@ -8,29 +8,114 @@ for games. It allows developers to extend their existing light probe
 tools, knowledge, and experience with ray tracing to eliminate bake
 times and avoid light leaking.
 
-DDGI was first presented at GTC'19 and GDC'19 in the NVIDIA sponsored sessions. 
-You can [see the video online](https://www.gdcvault.com/play/1026182/).
-It is described in a peer-reviewed research paper,
+Hardware-accelerated programmable ray tracing is now accessable
+through in DXR, VulkanRT, OptiX, Unreal Engine, and Unity. This enables
+many ways to compute global illumination. DDGI is a new strategy for
+lighting that expands developers' options.
 
->  Zander Majercik, Jean-Phillipe Guertin, Derek Nowrouzezhrai, and Morgan McGuire,
->  **Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Probes**,
->  Journal of Computer Graphics Tools, April 2019 (to appear)
-
-with our academic collaborators at McGill and the University of Montreal, 
-which I'll present for an academic audience at [I3D'19](http://i3dsymposium.github.io/2019/) 
-in May.
-
-Next week, I'll update this page with implementation details from the talk.
-Game developers can contact Morgan McGuire <mcguire@nvidia.com> / [@CasualEffects](https://twitter.com/CasualEffects)
-for more information in the mean time.
 
 VFX Breakdown
 ==========================================================
+
+Here's an example of the image quality that DDGI provides. These
+images were rendered on GeForce RTX 2080 Ti at 90 fps. 
+
+DDGI contributed 1 ms/frame to the render cost. That includes the
+amortized bounding volume hierarchy (BVH) update, ray cast, ray shade,
+and gathering in screen space during deferred shading.
+
+Glossy global illumination is not part of DDGI, but I'm showing it
+here to present a complete ray-traced rendering solution. The sample
+glossy GI cost and additional 2 ms/frame.
+
+
 ![Final result, with Materials](x1-04-materials.jpg)
 
 ![Direct Illumination](x1-00-direct.jpg) ![+DDGI](x1-01-ddgi.jpg)
 ![+Volumetric](x1-02-volumetric.jpg) ![+Glossy GI](x1-03-glossy.jpg)
 
+
+Advantages
+==========================================================
+
+DDGI is a good fit for:
+
+- _Indoor-outdoor and indoor_: DDGI avoids *light leaks*
+- _Game runtimes_: DDGI guarantees performance, *scales* across GPUs and resolutions up to 4k, and has *no noise*
+- _Game production_: DDGI *avoids baking time* and per-probe tuning and accelerates your existing light probe workflow and expertise
+- _Any light type_: DDGI automatically works with point, line, and area lights, skybox lighting, and emissive objects
+- _Engines_: DDGI upgrades existing *light probe* engine data paths and tools
+- _Content creation_: DDGI works with *fully dynamic* scenes and does not require manual intervention
+
+
+Limitations
+==========================================================
+
+
+The major costs and limitations of DDGI are:
+
+- 5 MB GPU RAM per cascade, peak *20 MB* for all cascades and intermediates
+- *1-2 ms* per frame for best performance, or *1-2 Mrays* per frame for "ultra" quality
+- Overhead is minimized when also using ray tracing for other effects, such as glossy or shadow rays
+- Art, lighting, and DDGI parameters should be codesigned during look development and production. 
+  DDGI is not a good fit for adding to a game with locked-down assets.
+- *Lighting flows slower* on low-end GPUs (world-space lag, no screen-space ghosting)
+- Shadowmap-like *bias parameter* must be tuned to scene scale
+- Cannot prevent leaks from zero-thickness/*single-sided* walls
+- Must be paired with a *separate glossy global illumination* solution, such as screen-space ray tracing, 
+  denoised geometric ray tracing, or environment probes
+
+
+
+Details
+==========================================================
+
+I'm currently writing the following pages of article to explains DDGI in several parts:
+
+1. *Introduction to real-time global illumination*. What everyone in graphics should know.
+2. *DDGI overview* for choosing your GI strategy
+3. *Algorithm explanation* for programmers and researchers
+4. *Implementation details* to structure your integration plan
+5. *Production optimization* techniques for peak performance
+
+<!--
+This article explains DDGI in several parts:
+
+1. [Introduction to real-time global illumination](intro-to-gi.html). What everyone in graphics should know.
+2. [DDGI overview](overview.html) for choosing your GI strategy
+3. [Algorithm explanation](algorithm.html) for programmers and researchers
+4. [Implementation details](implementation.html) to structure your integration plan
+5. [Production optimization](optimization.html) techniques for peak performance
+-->
+
+The team at NVIDIA is working with partners on the first engine and
+game integrations of DDGI now. During that process I'm updating this
+article with new information on best practices and additional
+implementation detail. Game and engine developers can contact Morgan McGuire
+<mcguire@nvidia.com> / [@CasualEffects](https://twitter.com/CasualEffects) for 
+integration support from NVIDIA.
+
+In addition to the latest information in this article, several
+previous presentations describe the basic ideas and give targetted
+experimental results. DDGI was first presented at GTC'19 and GDC'19 in
+the NVIDIA sponsored sessions. You can [see the video online](https://www.gdcvault.com/play/1026182/). 
+
+<center><a href="https://www.gdcvault.com/play/1026182/" target="_blank"><img src="video-icon.jpg" style="width:50%; border:4px solid #000"></a></center>
+
+An early version of DDGI is also described in the peer-reviewed research paper,
+
+>  Zander Majercik, Jean-Philippe Guertin, Derek Nowrouzezahrai, and Morgan McGuire,
+>  **Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Probes**,
+>  [Journal of Computer Graphics Tools](http://jcgt.org/), April 2019 (to appear)
+
+with our academic collaborators at McGill and the University of Montreal. 
+I'll present this for a scientific audience at [I3D'19](http://i3dsymposium.github.io/2019/) 
+in May.
+
+                               * * * *
+
+I wrote this blog article in collaboration with my colleagues [Zander Majercik](https://research.nvidia.com/person/zander-majercik) 
+and [Adam Marrs](http://www.visualextract.com/) at NVIDIA.
 
 <script src="../ce-blog.js"> </script>
 
