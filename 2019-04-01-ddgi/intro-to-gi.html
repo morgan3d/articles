@@ -1,12 +1,232 @@
 <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
-      **Part 1: Global Illumination Overview**
+      **Part 2: Global Illumination**
       [Dynamic Diffuse Global Illumination](index.html)
       2019 April 16
       Updated 2019 April 16
 
+This is a simplified introduction to the core concepts of global
+illumination for real-time application developers. The focus is on
+introducing the terms needed to understand Dynamic Diffuse Global
+Illumination.
+
+I'm skipping a lot of technical detail and using contemporary game
+artist jargon. I mention the academic terms in passing to connect to
+research publications. The
+[The Graphics Codex](http://graphicscodex.com) has a deeper
+explanation that is still friendly.
 
 
-<table width=100%><tr><td>[ <== Previous Page: Introduction](index.html)</td><td style="text-align:right">[Next Page: DDGI Overview ==> ](overview.html)</td></tr></table> 
+Direct Illumination
+====================================================================
+
+![Direct illumination arrives straight from an emitter](x2-gi-direct.png width=360px) The image on the right is a 2D schematic of a gray box. The left wall
+is painted yellow and the right wall is painted cyan (blue-green). At the top of the
+box is a light bulb, which I'll call an *emitter* to distinguish
+it clearly from the "light" energy in rays. On the right of the box
+is the camera, and resting on the bottom is a gray sphere. The dark
+rectangle on the floor represents the shadow of the sphere.
+
+*Direct illumination* is the light that arrives at a surface straight 
+from the emitter. I've drawn the path of two direct illumination light
+rays as white arrows. There are an infinite number of other direct illumination
+rays.
+
+When the direct illumination scatters off surfaces into the camera, it can
+see those surfaces. The color that we see for a surface is the color of light
+that the surface reflected.
+
+We call these surfaces that the camera sees from its viewpoint
+the "[camera] primary surfaces". Note that any surface that receives
+direct illumination is a primary surface _from the light's viewpoint_.
+
+![Direct illumination only](x2-direct-villa.jpg width=360px) On the right is an example of direct illumination 
+only in a 3D scene. The sun shines through a hole in the roof on the left wall. Shadows
+are completely black because there is no direct line to those locations from the sun.
+The emissive skybox is also visible in the distance. The image is very dark because
+most of the scene is not lit by direct illumination.
+
+Direct illumination is what is computed with pixel shaders and shadow maps in real-time
+for most games today.
+
+
+
+Global Illumination
+====================================================================
+
+![Global illumination reflects at least twice](x2-gi-second.png width=360px) There are also *secondary* surfaces that the camera can't see directly,
+but that affect the image. For example, some direct illumination strikes
+the cyan wall that is behind the camera. The cyan wall reflects cyan light
+onto the sphere in the center. (Light reflection is interchangably also called
+"scattering" or "bouncing", and it is the same process as "shading".)
+
+The camera can't see the cyan wall. But it can see the side of the 
+sphere that is lit with cyan reflected light. That light is
+indirect, or *global illumination*, abbreviated as "GI". 
+
+In this case, the cyan light on the side of the sphere
+has reflected twice before reaching the camera.
+
+![A global illumination path of five reflections](x2-gi-fifth.png width=360px) Since the light keeps reflecting off surfaces until it is completely absorbed, 
+there is also global illumination of three, four, five, and more reflections.
+The image on the right shows a path with five reflections. It is dark green
+by the end because the cyan wall absorbed all of the red and the yellow wall
+absorbed all of the blue.
+
+In the real world, global illumination can reflect infinitely.
+However, some light is absorbed at each surface. After a few
+reflections there is so little that it is not worth simulating any
+further. Offline rendering for movies typically uses between five 
+and ten reflections.
+
+Global illumination in games has previously been baked (precomputed)
+offline during production for games and stored in light maps or
+irradiance probes. There are some clever tricks for dynamic GI such as
+screen space ray tracing, but most global illumination in previous
+games can't change with the scene. With GPU accelerated geometric ray
+tracing, upcoming games can now compute high-quality global illumination in real
+time.
+
+In academic terminology, "global" illumination includes the direct
+light. In game terminology, "global" usually refers to only the indirect
+light and direct light is computed separately.
+
+![Direct + global illumination](x2-global-villa.jpg width=360px) Here's the 3D
+scene with both direct and full global illumination, taken as a screenshot
+from our real-time implementation. I'm showing just the light,
+without materials (textures). The global illumination has a red tint because the unseen
+wall materials are red. Most of the light in this scene is from global illumination.
+
+The renderer used thousands of reflections for each light path. But
+some light is lost at each reflection and there is finite precision in the texture
+map. So, only the first twenty or so reflections make a noticable difference in image quality. For example,
+with 90% reflective walls, after 20 reflections 1 - 0.9<sup>20</sup> = 87% of the light has been
+absorbed.
+
+
+Visibility
+=========================================================
+
+In discussing rendering, ![Shadows do not have visibility to the emitter](x2-visibility.png width=360px)
+*visiblity* generalizes from "what the camera sees" to whether there is an unobstructed
+straight path between any two points. 
+
+Primary surfaces have visibility _to the camera_. Points
+that receive direct illumination have visibility _to the emitter_.
+Shadows are locations that do not have visibility to the emitter.
+
+For correct global illumination, it is important that objects
+can cast indirect light shadows. This means computing visibility
+for all points and only allowing light to reflect between ones
+that have visibility.
+
+It seems obvious that objects should block indirect light as well
+as direct light, since they do in the real world. Computing visibility
+for global illumination can be tricky, however. Just as 3D games before
+the year 2000 often did not have correct shadows, many games today
+either intentionally omit visibility for global illumination or struggle
+to hide errors in that visibility computation. We call these *light leaks*
+or *shadow leaks* depending on whether the visual error is bright or dark.
+
+
+Glossy Reflection
+=========================================================
+
+![Glossy reflection arises from mirror-like microfacets](x2-microfacet.png width=360px)The diagram on the right shows a schematic of a "flat" surface
+viewed under a magnifying glass. Everything
+is usually a little bit rough microscopically. 
+The surface acts like a broken mirror even for surfaces that you
+wouldn't think of as mirror-like, such as rocks, apples, or leather.
+There are lots of mirror fragments called *microfacets*.
+
+When light hits the surface and reflects right off a microfacet, that
+creates a glossy reflection. (The terms specular and shiny are also
+used for this, and GGX and Blinn-Phong are two microfacet models that you
+might be familiar with.)
+
+!!! Info Glossy Reflection
+    (Specular, shiny, microfacet, roughness/smoothness, GGX, Blinn-Phong, highlights, etc.)
+    
+    - Light scatters *at* the surface
+    - Appearance changes with angle
+    - Reflection color is often unchanged by the material
+
+The reflection direction is in the mirror direction of the
+microfacet--it bounces like a billiard ball.  If the surface is
+microscopically smooth, then you see a perfect mirror reflection. When
+the surface is rough, that reflection gets blurry or dull because
+different facets are sending light in different directions.
+
+![Glossy reflection in a 3D scene](x2-glossy-villa.jpg width=360px)If you look directly at something really bright
+in the reflection, such as an emitter, then you see a highlight. But really everything
+is being reflected, it is just sometimes too dark to notice
+unless you look carefully.
+
+DDGI will light the surfaces seen in glossy reflections, and it can
+incorporate second-order glossy reflections into the GI paths that
+lead to a final diffuse reflections. But it does not render glossy
+reflections for the camera's view. This article briefly describes a
+technique for glossy ray tracing but does not discuss how to optimize
+it in production as the focus here is on diffuse GI.
+
+
+Diffuse Reflection
+=========================================================
+
+![Diffuse reflected light scatters inside an object](x2-diffuse.png width=360px)For some surfaces, such as office walls, you don't see much glossy
+surface reflection.  Instead of scattering off the surface, most of
+the light that shines on those surfaces penetrates a little under the
+surface. The light scatters around and then comes back out in a random
+direction. This is *diffuse* reflection.
+
+Because the light interacts heavily with the material, the color of
+light that emerges has been filtered by the material. This works a
+little differently in the real world than in real-time rendering
+because most rendering only tracks the three color contributions of
+red, green, and blue. But almost all of the time that approximation is
+good enough, at least for entertainment applications.
+
+!!! Info Diffuse Reflection
+    (Matte, Lambertian, Oren-Nayar, Henyey-Greenstein, Diffuse BRDF, etc.)
+    
+    - Light scatters just below the surface
+    - Visible from all directions
+    - Color is the product of the light and material colors
+
+The same physical process gives rise to deep subsurface scattering and
+transmission, which we don't need for describing DDGI.
+
+![Diffuse global illumination, including volumetrics](x2-diffuse-villa.jpg width=360px)The picture on the right
+shows the diffuse portion of global illumination in our 3D scene. This includes some diffuse light that is scattered
+off tiny dust and fog particles in the air, creating *volumetric* effects.
+
+In physics terminology, the diffuse global illumination I've described
+is the irradiance field. It is all kinds of reflection, where last
+reflection before the camera is diffuse. Modern light maps/radiosity normal maps,
+voxels, and irradiance
+probes store this kind of lighting, although often with some problems
+handling visibility. The diffuse GI/irradiance field is different from 
+*radiosity*, which requires all reflection everywhere to be diffuse.
+That's what Quake III and older light maps stored.
+
+
+Summary
+=========================================================
+
+We've now covered all of the terms needed to understand what the DDGI
+technique provides:
+
+- *Dynamic* - Everything can change at runtime: camera position, emitters, geometry, and even materials.
+- *Diffuse* - The last reflection into the camera is from the diffuse part of the material. The GI paths up to the last reflection can be both glossy and diffuse.
+  The glossy part of the last reflection is handled separately with glossy ray tracing or screen-space ray tracing.
+- *Global Illumination* - Light that has reflected off at least two surfaces for reaching the camera, and up to infinite reflections within texture map precision.
+
+as well as the key idea of *visibility* for global illumination, which DDGI computes
+in a new way to prevent light leaks and speed workflow.
+
+
+
+<!-- <table width=100%><tr><td>[ <== Previous Page: Introduction](index.html)</td><td style="text-align:right">[Next Page: DDGI Overview ==> ](overview.html)</td></tr></table>  -->
+<table width=100%><tr><td>[ <== Previous Page: Introduction](index.html)</td><td style="text-align:right">Next Page: DDGI Overview (coming soon) ==></td></tr></table> 
 
                                * * * *
 
