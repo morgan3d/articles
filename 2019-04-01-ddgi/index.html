@@ -20,15 +20,18 @@ VFX Breakdown
 ==========================================================
 
 Here's an example of the image quality that DDGI provides. These
-images were rendered on GeForce RTX 2080 Ti at 90 fps. 
+images were rendered at 1080p on GeForce RTX 2080 Ti at 90 fps.
 
 DDGI contributed 1 ms/frame to the render cost. That includes the
 amortized bounding volume hierarchy (BVH) update, ray cast, ray shade,
 and gathering in screen space during deferred shading.
 
-Glossy global illumination is not part of DDGI, but I'm showing it
-here to present a complete ray-traced rendering solution. The sample
-glossy GI cost and additional 2 ms/frame.
+DDGI is about diffuse lighting, but it also accelerates very rough and
+second-bounce _glossy_ global illumination. Moreover, this article
+explains how to combine the ray trace operations for smooth glossy
+illumination with DDGI to improve the ray tracing throughput of
+each. The sample glossy GI cost an additional 2 ms/frame in this
+implementation, where it is configured for highest image quality.
 
 
 ![Final result, with Materials](x1-04-materials.jpg)
