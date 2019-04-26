@@ -11,7 +11,7 @@ tools, knowledge, and experience with ray tracing to eliminate bake
 times and avoid light leaking.
 
 Hardware-accelerated programmable ray tracing is now accessable
-through in DXR, VulkanRT, OptiX, Unreal Engine, and Unity. This enables
+through DXR, VulkanRT, OptiX, Unreal Engine, and Unity. This enables
 many ways to compute global illumination. DDGI is a new strategy for
 lighting that expands developers' options.
 
@@ -51,19 +51,22 @@ DDGI is a good fit for:
 - _Any light type_: DDGI automatically works with point, line, and area lights, skybox lighting, and emissive objects
 - _Engines_: DDGI upgrades existing *light probe* engine data paths and tools
 - _Content creation_: DDGI works with *fully dynamic* scenes and does not require manual intervention
+- _Scalability_: *One code path* gives a smooth spectrum from baked light probes that avoid leaks 
+  on legacy platforms, through slowly updating runtime GI on budget GPUs, all of the way up to instant dynamic GI on enthusiast GPUs.
+  Unlock the power of high end PCs while still supporting a broad base.
 
 
-Limitations
+Costs
 ==========================================================
-
 
 The major costs and limitations of DDGI are:
 
 - 5 MB GPU RAM per cascade, peak *20 MB* for all cascades and intermediates
-- *1-2 ms* per frame for best performance, or *1-2 Mrays* per frame for "ultra" quality
-- Overhead is minimized when also using ray tracing for other effects, such as glossy or shadow rays
-- Art, lighting, and DDGI parameters should be codesigned during look development and production. 
-  DDGI is not a good fit for adding to a game with locked-down assets.
+- *1-2 ms* per frame for best performance in fixed-time mode, or *1-2 Mrays* per frame for ultra, fixed-quality mode (on 2080 Ti those are the same)
+- Overhead is minimized when also using ray tracing for other effects, such as glossy and shadow rays
+- DDGI should be introduced early in look development and production. 
+  GI changes lighting substantially, and requires more physically-plausible
+  geometry and tuning than direct light, and offers new gameplay opportunities. 
 - *Lighting flows slower* on low-end GPUs (world-space lag, no screen-space ghosting)
 - Shadowmap-like *bias parameter* must be tuned to scene scale
 - Cannot prevent leaks from zero-thickness/*single-sided* walls
