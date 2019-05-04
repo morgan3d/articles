@@ -1,17 +1,271 @@
 <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
-      **Part 2: DDGI Overview**
+      **Part 3: DDGI Overview**
       [Dynamic Diffuse Global Illumination](index.html)
-      2019 April 16
-      Updated 2019 April 16
+      2019 May 3
+      Updated 2019 May 3
 
 
 
-<table width=100%><tr><td>[ <== Previous Page: Intro to GI](intro-to-gi.html)</td><td style="text-align:right">[Next Page: Algorithm Explanation ==> ](algorithm.html)</td></tr></table> 
+Glossy GI
+============================================================================
+
+Environment Maps
+----------------------------------------------------------------------------
+Glossy global illumination effects produce the recognizable
+reflections and highlights seen on shiny surfaces. Since the 70's,
+glossy GI has been approximated with reflection maps
+[#Blinn76]. The core technique has been expanded over time with various clever
+parallax distortions and for surfaces of varying roughness. 
+
+These are also known as environment maps, environment probes, radiance
+probes, and light probes (distinct from the "irradiance probes" that
+I'll mention for diffuse GI). Except for car racing games which often
+render a single reflection probe in real-time, most real-time programs
+use baked (precomputed) probes. This means that dynamic objects and
+lighting conditions cannot affect reflections. 
+
+Some tricks such as rendering mirrors to texture, rendering the scene
+inverted, and grabbing distorted samples from the screen or skybox
+have been used in specific titles for planar reflectors, but none were
+general purpose real-time glossy GI solutions.
+
+Ray Tracing
+----------------------------------------------------------------------------
+For the past several years, screen-space ray tracing has been used as
+an approximation of reflections between close objects that are both
+visible on the screen. This first appeared in CryEngine 3 [#Sousa11]
+in its modern form, and was quickly adopted and extended by many games
+[#Wronski14] [#Valient14] [#Stachowiak15]. I analyzed this technique in detail in a
+[previous research paper](http://jcgt.org/published/0003/04/04/).
+
+Screen-space ray tracing of course cannot produce glossy reflection
+of objects or parts of objects that are not on screen. True geometric
+ray tracing solves that problem. Today, many games use at least 
+one and sometimes both of these techniques simultaneously.
+
+![Geometric and screen-space ray traced glossy GI in recent games.](x3-glossy-games.jpg width=80%)
+
+
+Algorithm
+------------------------------------------------------------------------
+
+Glossy GI on a perfect mirror is straightforward to render. For
+mirrors, the shaded value at the ray hit is the glossy GI value. For
+rough surfaces that produce blurred reflections, there are two
+choices. You can trace stochastic rays distributed according to the
+roughness and then blur out the noise, or trace perfect mirror rays
+and then blur the mirror reflection. Both approaches work with both
+screen-space and geometry ray tracing.
+
+![Glossy GI by ray tracing, deferred shading and blurring to MIP maps, and then sampling per pixel.](x3-glossy-steps.jpg)
+
+The figure above shows glossy GI rendered by this process. In step 1, I traced
+a G-buffer that was half the vertical resolution of the screen by generating
+a mirror reflection ray at each pixel. I halved the resolution
+to double performance. I chose to do so vertically because most
+reflections for this content were on the floor and are thus vertically
+blurred anyway in screen space.
+
+I then ran the regular deferred shading code on the mirror G-buffer.
+The default [G3D](https://casual-effects.com/g3d) deferred shader
+can reconstruct hit position and view direction from the z-buffer and pixel
+coordinate (as most deferred shaders do), or by explicitly reading them
+from buffers. For this case, I passed the ray hit and direction buffers
+because the shading should be in the reflected direction and not towards
+the camera. G3D has persistent shadow maps, so the shading was able to
+compute direct illumination shadows from those. In an engine such as Unreal
+that uses transient shadow maps, it is probably best to use shadow ray casts
+on reflection points. The second order glossy GI and the diffuse GI
+on the points seen in reflection were both computed with DDGI.
+
+Step 2 blurred the mirror buffer [#Valient14] at progressively larger scales
+into a MIP map chain. The blurring respects edges using a bilateral filter.
+
+Step 3 samples this glossy GI at primary surfaces. It computes the
+correct MIP level to sample based on the roughness of the primary
+surface, its distance from the camera, and the distance of the
+reflected object (secondary surface) from the primary surface.
+
+I chose to blur mirror reflections instead of stochastic glossy ones because
+I've found it easier to avoid flicker this way. The result is slightly less
+physically correct.
+
+On RTX 2080 Ti for this scene with a few million polygons, the
+complete glossy GI pass cost between 1 and 2 ms depending on
+viewpoint, at 1920x1080 resolution. This includes the amortized cost
+of BVH refit.
+
+
+Previous Diffuse GI
+==================================================
+
+State of the Art
+----------------------------------------------------------
+
+The main strategies that real-time renderers have previously used for
+diffuse global illumination are:
+
+- *Baked (precomputed) light maps* [#Quake97] [#Mitchell06]
+- *Irradiance probes/voxels* [#Greger98] [#Tatarchuk05] [#Ramamoorthi11] [#Gilabert12]
+- *Light propagation volumes* [#Kaplanyan09]
+- *Sparse voxel cone tracing* [#Crassin11] [#McLaren16]
+- *Denoised ray tracing* [#Mara17] [#Schied17] [#Metro19]
+- *Reflective shadow maps* [#Dachsbacher05] [#Ding14] [#Malmros17]
+
+Baked light maps and light probes are dominant today and supported by
+most game engines.
+
+The [Enlighten](https://www.siliconstudio.co.jp) middleware can also update
+light maps and probes at runtime using simplified models. It has been used
+in several games and is part of the inspiration for DDGI.
+
+In addition to this list, there are many other research techniques for
+real-time GI, such as Precomputed Radiance Transfer, Virtual Point Lights,
+and Image Space Photon Mapping. The ones that I list have been widely
+documented as shipping in games. The citations are representative but
+not comprehensive. See
+[_Real-Time Rendering_](http://www.realtimerendering.com/) 4th edition
+for a complete survey of techniques.
+
+I'll focus the evaluation here on irradiance probes because that is
+the previous technique that DDGI accelerates and upgrades.
+
+
+Classic Irradiance Probes
+----------------------------------------------------------------------
+
+This technique goes back to 1998 [#Greger98] and is supported by most engines
+today. Fill the world with small probes that measure and store diffuse
+GI. Usually prebaked, although some engines have updated them at runtime by
+casting rays against very low level of detail (LOD) versions of the scene,
+relighting [#Gilabert12], splatting low LOD points, or rasterizing and blurring cube maps.
+
+![Irradiance probes in multiple engines.
+<br><small>Image Credits: Geomerics and Ninja Theory, [Unity](https://unity3d.com/learn/tutorials/topics/graphics/probe-lighting),
+[Unreal](https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/IndirectLightingCache),
+[Far Cry 3](https://www.gdcvault.com/play/1015326/Deferred-Radiance-Transfer-Volumes-Global)</small>](x3-irradiance-probes.jpg width=80%)
+
+Probes might be encoded as tiny cube maps, spherical harmonics, octahedral maps, etc.
+
+The quality is great. There are two problems. First, baking the probes
+slows down artists when moving geo and lighting during production.
+
+More serious is that that they leak light and shadow...
+
+
+
+Light Leaks
+--------------------------------------------------------------------------
+
+If the lighting changes radically near a probe because of a wall, they
+can bleed light inside of a room from outside sun.  Or bleed darkness
+outside.
+
+The slides in the following image are from a specific Treyarch
+presentation at SIGGRAPH.  But everybody has the same problem and this
+topic is raised nearly every year at GDC or SIGGRAPH, with a different
+clever solution for trying to hide the problem each time.
+
+![Slides from a game developer SIGGRAPH talk [#Hooker16] explaining the light leaks from irradiance probes.](x3-probe-leaks.jpg width=80%)
+
+For the image on the top, the bright area on the ceiling is sunlight
+on the roof bleeding in.
+
+If the probe lands inside of a wall, then all that it sees is darkness
+and it bleeds shadow everywhere. The dark shadow on the door on the
+lower right image is because the probe behind the door is bleeding
+shadow out.
+
+The state of the art is to have artists manually move each probe to a
+good location and manually place blocker geometry to divide inside and
+outside. That is another huge workflow cost. This is what Hooker’s
+talk was actually about: the tool that they created to help artists
+manually inject visibility information.
+
+Moving the probes also doesn't help if you want to get to runtime
+dynamic probe lighting. If you update lighting at runtime, then
+dynamic geometry or a character might be covering up a probe no matter
+where you place it.
+
+I'm explaining the leaking issue for probes because that’s where we're
+going to fix it today. But leaking and discontinuities are a problem for all previous
+real-time GI solutions. Here are some examples for light maps. You could
+find the same for light propagation volumes and sparse voxel octtrees. I'm
+not picking on anyone's code--this is an underlying flaw in the
+algorithms that we all inherit and not an implementation bug of any
+particular game or engine. I used several Unreal forum images
+only because it was easy to find documentation of problems developers
+are facing there.
+
+![Seams and leaks due to light map parameterizations. <br><small>Image credits: 
+[#Iwanicki13],
+[Unreal 1](https://answers.unrealengine.com/questions/336484/light-leaking-problem-solid-geometry.html),
+[#Rakhteenko18],
+[Unreal 2](https://www.worldofleveldesign.com/categories/udk/udk-lightmaps-03-how-to-fix-light-shadow-lightmap-bleeds-and-seams.php)</small>](x3-lightmap-leaks.jpg width=80%)
+
+
+DDGI
+============================================================================
+
+
+
+<!-- <table width=100%><tr><td>[ <== Previous Page: Global Illumination](intro-to-gi.html)</td><td style="text-align:right">[Next Page: Algorithm Explanation ==> ](algorithm.html)</td></tr></table>  -->
+
+<table width=100%><tr><td>[ <== Previous Page: Global Illumination](intro-to-gi.html)</td><td style="text-align:right">Coming soon: Algorithm Explanation</td></tr></table> 
 
                                * * * *
 
 I wrote this blog article in collaboration with my colleagues [Zander Majercik](https://research.nvidia.com/person/zander-majercik) 
 and [Adam Marrs](http://www.visualextract.com/) at NVIDIA.
+
+                               * * * *
+
+[#Metro19]: Battaglia, [Interview with Ben Archard on _Metro: Exodus_](http://casual-effects.com/research/Mara2017Denoise/index.html), _Eurogamer_, Feb 17, 2019
+
+[#Blinn76]: Blinn and Newell, Texture and reflection in computer generated images, _CACM_, Vol. 19, No. 10, pages 542-547, October 1976
+
+[#Crassin11]: Crassin, Neyret, Sainz, Green, and Eisemann, [Interactive Indirect Illumination Using Voxel Cone Tracing](https://research.nvidia.com/sites/default/files/pubs/2011-09_Interactive-Indirect-Illumination/GIVoxels-pg2011-authors.pdf), _Pacific Graphics_, 2011
+
+[#Dachsbacher05]: Dachsbacher and Stamminger, [Reflective Shadow Maps](http://www.klayge.org/material/3_12/GI/rsm.pdf), _I3D_, 2005
+
+[#Ding]: Ding, [In-Game and Cinematic Lighting of _The Last of Us_](https://www.gdcvault.com/play/1020475/In-Game-and-Cinematic-Lighting), GDC Presentation, 2014
+
+[#Gilabert12]: Gilabert and Stefanov, [Deferred Radiance Transfer Volumes: Global Illumination in _Far Cry 3_](https://www.gdcvault.com/play/1015326/Deferred-Radiance-Transfer-Volumes-Global), Talk at GDC, 2012
+
+[#Greger98]: Greger, Shirley, Hubbard, and Greenberg, [The Irradiance Volume](https://www.cs.utah.edu/~shirley/papers/irradiance.pdf), _IEEE CG&A_, 18(2):32-43, 1998
+
+[#Hooker16]: Hooker, [Volumetric Global Illumination at Treyarch](https://www.activision.com/cdn/research/Volumetric_Global_Illumination_at_Treyarch.pdf), SIGGRAPH Advances in Real-Time Rendering Course, 2016
+
+[#Iwanicki13] Iwanicki, [Lighting Technology of "The Last of Us"](http://miciwan.com/SIGGRAPH2013/Lighting%20Technology%20of%20The%20Last%20Of%20Us.pdf), SIGGRAPH Advances in Real-Time Rendering Course, 2013
+
+[#Kaplanyan09]: Kaplanyan, [Light Propagation Volumes in _CryEngine 3_](http://advances.realtimerendering.com/s2009/Light_Propagation_Volumes.pdf), SIGGRAPH Advances in Real-Time Rendering Course, 2009
+
+[#Malmros17]: Malmros, [_Gears of War 4_: custom high-end graphics features and performance techniques](https://dl.acm.org/citation.cfm?id=3085162&dl=ACM&coll=DL), SIGGRAPH Talk, 2017
+
+[#Mara17]: Mara, McGuire, Bitterli, and Jarosz, [An Efficient Denoising Algorithm for Global Illumination](http://casual-effects.com/research/Mara2017Denoise/index.html), _HPG 2017_, July 27, 2017, 7 pages
+
+[#McLaren16]: McLaren, [Graphics Deep Dive: Cascaded voxel cone tracing in _The Tomorrow Children_](https://www.gamasutra.com/view/news/286023/Graphics_Deep_Dive_Cascaded_voxel_cone_tracing_in_The_Tomorrow_Children.php), Gamasutra, November 28, 2016
+
+[#Mitchell06]: Mitchell, McTaggart, and Green, [Shading in Valve’s _Source_ Engine](https://steamcdn-a.akamaihd.net/apps/valve/2006/SIGGRAPH06_Course_ShadingInValvesSourceEngine.pdf), SIGGRAPH Advances in Real-Time Rendering Course, 2006
+
+[#Quake]: ID Software, Quake II, 1998
+
+[#Rakhteenko18] Rakhteenko, [Baking artifact-free lightmaps on the GPU](Rakhteenko, Baking artifact-free lightmaps on the GPU, 2018 https://ndotl.wordpress.com/2018/08/29/baking-artifact-free-lightmaps/), Blog 2018 
+
+[#Ramamoorthi11]: Ramamoorthi and Hanrahan, [An Efficient Representation for Irradiance Environment Maps](http://www.cs.virginia.edu/~jdl/bib/envmap/representation/ramamoorthi01.pdf), _SIGGRAPH_, 2001
+
+[#Schied17]: Schied, Kaplanyan, Wyman, Patney, Chaitanya, Burgess, Liu, Dachsbacher, Lefohn, and Salvi, [Spatiotemporal variance-guided filtering: real-time reconstruction for path-traced global illumination](https://research.nvidia.com/sites/default/files/pubs/2017-07_Spatiotemporal-Variance-Guided-Filtering%3A//svgf_preprint.pdf), _HPG '17_, July 27, 2017, 12 pages
+
+[#Sousa11]: Sousa, Kasyan, and Schulz, [Secrets of _CryENGINE 3_ graphics technology](http://www.crytek.com/cryengine/presentations/secrets-of-cryengine-3-graphics-technology). SIGGRAPH Advances in Real-Time Rendering, 2011
+
+[#Stachowiak15]: Stachowiak, [Stochastic Screen-Space Reflections](https://www.ea.com/frostbite/news/stochastic-screen-space-reflections), SIGGRAPH Advances in Real-Time Rendering, 2015
+
+[#Tatarchuk05]: Tatarchuk, [Irradiance Volumes for Games](https://developer.amd.com/wordpress/media/2012/10/Tatarchuk_Irradiance_Volumes.pdf), GDC Presentation, 2005
+
+[#Valient14]: Valient, [Taking _Killzone Shadow Fall_ image quality into the next generation](http://www.guerrilla-games.com/presentations/GDC2014_Valient_Killzone_Graphics.pdf), Presentation at GDC, 2014
+
+[#Wronski14]: Wronski, [_Assassin’s Creed 4: Black Flag_, the road to next-gen graphics](http://bartwronski.files.wordpress.com/2014/03/ac4_gdc.pdf), GDC Presentation, 2014
+
 
 <script src="../ce-blog.js"> </script>
 
