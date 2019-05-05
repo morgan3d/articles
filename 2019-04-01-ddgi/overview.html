@@ -388,7 +388,7 @@ The DDGI algorithm is similar to the glossy GI algorithm sketched earlier
 in this part. It has three steps: trace, update probes by blending, and
 then shade the points visible on screen.
 
-*Step 1* generates 100-300 rays for each probe (192 is a good number)
+*Step 1* generates 100-300 rays for each probe (192 is a good default)
 and traces them through the scene. It generates a G-buffer from these
 hits and runs the standard deferred shader on them. 
 
@@ -414,8 +414,9 @@ ensures that results smoothly change without requiring explicit
 history. This is similar to how TAA and other kinds of
 exponentially-weighted moving averages (EMWA) operate.  Hysteresis
 values of 90% to 99.5% (of the previous frame) are viable; lower gives
-faster update but can flicker. We recommend 97% hysteresis for the general case and have some adaptive
-filters for special cases described in the optimization part of this article.
+faster update but can flicker. We recommend 97% hysteresis for the
+general case and have some adaptive filters for special cases
+described in the optimization part of this article.
 
 *Step 3* samples the probes per pixel, per frame. This can be done
 for deferred shading, forward shading, some mixture of them,
