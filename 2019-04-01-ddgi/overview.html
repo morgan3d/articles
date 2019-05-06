@@ -191,7 +191,7 @@ $E_\mathrm{e}(X) = \int_{\Omega} L(X, \w) \max(0, \w \cdot \n) ~ d\w$, where $\n
 in which irradiance is measured (the normal), $X$ is the point, and $L$ is the radiance
 function.
 
-Irradianec probes are usually baked offline, although some engines
+Irradiance probes are usually baked offline, although some engines
 have updated them at runtime by casting rays against very low level of
 detail (LOD) versions of the scene, relighting [#Gilabert12],
 splatting low LOD points, or rasterizing and blurring cube maps.
@@ -249,21 +249,22 @@ dynamic probe lighting. If you update lighting at runtime, then
 dynamic geometry or a character might be covering up a probe no matter
 where you place it.
 
-I'm explaining the leaking issue for probes because that’s where we're
-going to fix it today. But leaking and discontinuities are a problem for all previous
-real-time GI solutions. Here are some examples for light maps. You could
-find the same for light propagation volumes and sparse voxel octtrees. I'm
-not picking on anyone's code--this is an underlying flaw in the
-algorithms that we all inherit and not an implementation bug of any
-particular game or engine. I used several Unreal forum images
-only because it was easy to find documentation of problems developers
-are facing there.
+I showed examples here for classic irradiance probes. 
+But leaking and discontinuities are a problem for all previous
+real-time GI solutions. For example, here are some examples for light maps. You could
+find the same for light propagation volumes and sparse voxel octtrees. 
 
 ![Seams and leaks due to light map parameterizations. <br><small>Image credits: 
 [#Iwanicki13],
 [Unreal 1](https://answers.unrealengine.com/questions/336484/light-leaking-problem-solid-geometry.html),
 [#Rakhteenko18],
 [Unreal 2](https://www.worldofleveldesign.com/categories/udk/udk-lightmaps-03-how-to-fix-light-shadow-lightmap-bleeds-and-seams.php)</small>](x3-lightmap-leaks.jpg width=80%)
+
+This is an underlying flaw in the algorithms that we all inherit, and
+not an implementation bug of any particular game or engine. I used
+several Unreal forum images only because it was easy to find
+documentation of problems developers are facing there. The same problem
+occurs in every engine and art tool.
 
 
 Dynamic Diffuse GI
