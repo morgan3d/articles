@@ -1,9 +1,484 @@
 <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
-      **Part 5: Production Optimization**
+      **Part 6: Production Optimization**
       [Dynamic Diffuse Global Illumination](index.html)
       2019 April 16
       Updated 2019 April 16
 
+The previous parts of this article explained the high level concepts
+of the DDGI method and then low-level details to guide your initial
+in-engine implementation of it. This part returns to the high level
+and describes how to scale DDGI for production use, with emphasis on
+implementation for games.
+
+Scaling applies in many ways: 
+
+- Resolutions and frame rates
+- Target GPUs
+- Large scenes
+
+So, I'll describe both how to maintain performance under these
+conditions, as well as how to _increase_ performance and visual
+fidelity for a specific platform target. The "we" below represents the
+combined experience of the NVIDIA RTX team. 
+
+I will continue updating this page based on new information as we work
+with our partner content creators and advance our internal research on
+ray tracing.
+
+
+Tone Mapping
+=====================================================
+
+Any lighting technology, and especially global illumination methods,
+affect the preferred tone mapping and color grading technology for a
+renderer. 
+
+Global illumination tends to add subtle gradients in 
+dim areas that are almost imperceptible in the final image, but
+when compared to flat ambient or environment probes add significant
+realism.
+
+Global illumination also expands the dynamic range of important
+lighting conditions. It is essential to use high-dynamic range (HDR)
+framebuffers and rendering techniques with GI. Popular formats
+are `R11G11B10F` and `RGBA16F`. Once in a HDR space, either a sRGB
+or RGB color space can be used. 
+
+For glossy reflections, it is important to use sufficiently
+high-precision normal maps and glossy texture maps. A good glossy
+lighting solution will reveal texture compression and precision
+artifcations. For diffuse GI this isn't an issue as the shading
+effects are blurred over more angles and the dynamic range is lower.
+
+What is essential for diffuse GI is a tone mapping solution that
+brightens dark regions and crushes bright ones without overly
+flattening lighting. This ensures that even on a low-dynamic range
+(LDR) monitor the HDR values and those subtle gradients in dark
+areas are visible. 
+
+Before dynamic GI, games used a lot of real-time direct lighting and
+offline-tuned ambient or baked GI terms to effectively reduce the
+intensity range of the lighting to fit what monitors can support. With dynamic,
+real-time lighting and full GI, this is no longer possible. The tone
+mapper and color grading system must be more aggressive as a result.
+
+We've found that the dark, "toe" end of the tone mapping curve has to
+provide much more boost when using diffuse GI than for traditional 3D
+games. To make indoor scenes lit by indirect light from the sun and
+sky passing through windows, we often ended up in a tone space where
+as little as 2% of the maximum representable framebuffer intensity
+mapped to 50% of the 8-bit range of the monitor. It helps to have an
+adaptive tone mapping system that adjusts to the average brightness of
+the frame.
+
+
+Outdoor Scenes
+=====================================================
+
+If there is significant terrain and outdoor scenes without many
+overhangs, only a few probes are needed vertically at any location.
+We recommend either changing the indexing scheme to be relative
+to the terrain (thus avoiding storage and computation for
+probes that would be underground or in the sky) if the terrain
+elevation is efficiently addressable. If not, then only compute
+the probes that are near the terrain surface, while force underground
+probes to black and significantly elevated probes to the skybox values.
+
+
+Accelerating Convergence
+=====================================================
+
+Ray Count vs. Hysteresis
+-----------------------------------------------------
+
+The global hystersis parameter is the primary control for balancing
+lighting responsiveness against low-frequency flicker. We've had good results
+on high end GPUs that can cast 192 to 256 rays per probe per frame with
+setting hysteresis to 95%. With the other changes described below,
+this causes lighting to converge in about 100 ms at 60 Hz even in dramatic
+cases such as explosions or opening hangar doors.
+
+At _higher_ frame rates, such as 144 and 240 Hz, this will converge
+even faster. In that case, more rays are being cast per second if the
+frame rate is higher and the rays per frame are held constant. To help
+maintain those high frame rates, you can reduce the cost of the ray
+tracing pass by reducing the number of rays per frame while keeping
+hysteresis constant.
+
+If you increase the number of rays per frame then you can decrease the
+hysteresis to produce faster convergence. With 1024 rays per probe,
+hysteresis can be lowered to 75% if the scene does not have very large
+contrasts between the brightest and darkest points.
+
+However, for many applications it is a better overall strategy to keep
+hysteresis relatively high and not cast more than 512 rays per probe
+even on high end GPUs. If you have additional ray tracing performance,
+spend it on other effects such as glossy reflections, or increase the 
+number of probes per cascade and density of probes in world space.
+
+
+Post-Tonemap Values
+-----------------------------------------------------
+
+Storing irradiance values directly in the probes is intuitive but
+inefficient for precision. It also slows the time until lighting
+appears to converge after major scene changes. In both cases this is
+because viewers are much more sensitive to changes in dim areas than
+in bright ones. This is why sRGB textures and monitors apply a
+nonlinear curve to values.
+
+We recommend encoding the irradiance (color) texture for
+the probes in a perceptual, post-gamma, post-tonemap
+space. This distributes the representable values approximately according
+to their perceptual significance if using a fixed-point texture
+format. More importantly, it also moves the exponentially-weighted
+moving average applied by hysteresis and 
+
+proportional to the visual significance
+
+for equal convergence. Used I^6. In practice [video]
+
+Drop hysteresis per ray on radical change. Kalman filter would be
+ideal, but requires extra state and computation.
+
+Drop hysteresis on large change of lights, time of day, explosion, set
+piece destruction, or other gameplay triggered change.
+
+Drop hysteresis either globally or for nearby probes when a large
+object is moving _very_ fast. For example, a crashing Star Destroyer,
+or a crumbling building or bridge.  If a large object moves so quickly
+that it can cross an entire probe grid cell in a single frame, then it
+could fall into its own indirect light shadow from the previous
+frame. This case doesn't arise very often for most games, so this is
+not a critical optimization in every engine. For probes on a 1-2m
+grid, the object would have to be falling faster than a reasonable
+terminal velocity in real life, which is also faster than most physics
+systems can reasonably handle for large objects.
+
+
+
+Reduce Sample Noise 
+-----------------------------------------------------
+
+Apply a MIP bias so that low-resolution versions of material textures
+are being used instead of high resolution ones. this speeds the cache
+and reduces flicker from rays hitting slightly different texels on
+each frame. For typical PC game texture density, we recommend dropping
+to at least MIP level 5 (1/32 resolution in each dimension) as a rule of thumb.
+
+To do this exactly, consider the texture resolution, the cone
+represented by each ray, and how the cone projects onto the triangle
+that is hit. If you cast 192 rays per probe, then each one has a solid
+angle that is $4 \pi / 192$ steradians and its projection grows in
+world space as it gets farther from the origin.
+
+You can't push too far down the MIP hierarchy without texture atlas gutters
+becoming a problem, though.
+
+Ignore normal maps when shading probe rays, since on average they are flat
+and just add noise to the samples. 
+
+For rough surfaces, copy the energy from the glossy lobe into the diffuse lobe.
+Do not _eliminate_ the glossy lobe or the surfaces will get darker.
+The glossy lobe will just add variation based on the exact triangle hit, but for
+a rough surface that variation is not going to be meaningful for a single ray.
+
+Keep the full glossy lobe for very smooth surfaces such as windows and water, however,
+or reflected highlights (caustics) and very big lighting changes will be overly 
+smoothed by the probes.
+
+
+Area Light Sources
+=====================================================
+
+DDGI acts as a path tracer with a diffuse last scattering event. This
+means that it can process _any_ light type when computing shading of
+the probe rays, even those that are hard to handle analytically for
+rasterization rendering. For example:
+
+- typical point ("punctual") sources of spot, directional, and omni-lights
+- sky domes with highly varying textures, such as at sunset
+- area and line lights
+- curved area lights, such as emissive characters and plants
+- area lights with texture maps such as emissive animated billboards
+- emissive textures
+- hundreds of small light sources such as candles
+- true volumetric sources such as bonfires
+
+DDGI can process the diffuse component of shading for your engine even if
+the engine has no way to treat these as light sources for the regular
+shading path. Just dropping an emissive square into a scene with no explicit
+light sources will create proper diffuse shading as if there were true
+shadowed area sources in your shading path. The limitation is that shadows
+from such sources will be extremely blurry. For large sources or many dim ones
+and relatively dense probes (0.5 m spacing), the shadowing can be fairly
+good, since the shadows should be blurry in that case. For smaller sources
+the shadows will not generally leak, but they will also not be as good 
+as with an explicit direct illumination term in the regular shader.
+
+Generating Probe Rays
+-----------------------------------------------------
+
+As with a path tracer, you can choose the rays for the probes themselves
+for computing the emissive term by either:
+
+*Next-event estimation with multiple-importance sampling* 
+: Spend half of your rays per probe on explicit directions towards light sources
+  weighed by their expected brightness instead of sending all in the spherical fibonacci directions.
+
+*Pure path tracing*
+: Send rays in low-discrepancy (e.g., the spherical fibonacci directions).
+
+Note that this is just how you choose the rays for casting from the probes.
+
+
+Shading Probe Rays
+------------------------------------------------------
+
+For the ray hits from the probes on non-emissive surfaces, you have the usual 
+choice of shading alternatives: analytic direct/more next-event estimation, 
+multiple importance sampling, pure path tracing, ... or letting the previous
+frame's probes handle the lighting.
+
+As path tracers do, you can also mix these approaches for different
+light types.  For example, we recommend pure path tracing for small
+emissives and the sky, analytic lighting for point sources, and coarse
+light importance sampling (choose a random point on every light and
+cast a shadow ray) for uniform rectangle and line lights. This gives
+a good combination of speed and implementation simplicity.
+
+
+Accelerating Ray Tracing
+=====================================================
+
+Minimize Live State
+-----------------------------------------------------
+Trace all rays before shading, keeping the hit shader as small as
+possible.  The best case is if the hit shader returns only a triangle
+index and (u,v) coordinate and a completely separate, non-ray shader
+is used for evaluating the material.  If your engine does not support
+this, then evaluate the material in the ray shader but do not perform
+lighting computations on it. The goal here is to keep ray traversal in
+a tight loop. Mixing shading with traversal can consume registers and
+bandwidth and thus significantly slow the ray cast for this application.
+
+Note that a single ray cast is used to compute both the distance and
+the irradiance.  We store these at different resolutions in the
+probes, but they are computed from the same rays. Do not cast two sets
+of rays with different densities.
+
+Simplify Probe Shading
+-----------------------------------------------------
+The probe material evaluation and shading passes is not likely to be a
+significant amount of time unless you have a lot of probes per
+cascade. However, some simple changes can reduce even that time. The
+techniques for MIP-biasing and in the Reduce Sample Noise section also
+will improve performance by improving cache coherence and reducing
+BRDF evaluation cost. 
+
+Eliminate shadow map filtering--probe rays can use nearest neighbor
+samples from shadow maps, since they are being heavily filtered after
+shading anyway. Eliminate AO computation from probe rays (screen-space
+AO can't be applied to them so you'd have to use more expensive RTAO
+or Voxel AO, and this isn't needed anyway because they will have
+implicit correct AO from computing indirect light).
+
+If you flag pure emissive (primarily, the sky) and all black (mostly 
+backface hits) specially in the G-buffer, then those can avoid all of
+the shading computation.
+
+
+Amortize Overhead
+-----------------------------------------------------
+Put probe G-buffer into the bottom half of the screen G-buffer.
+Giving the machine more work in a single ray gen shader helps
+the scheduler to optimize it.
+
+
+Sleep Unused Probes
+-----------------------------------------------------
+TODO: Sleeping. Probe validation rays using short anyhit to wake up. Always stop cast
+at distance and grab lighting from probes there.
+
+
+GPU-Friendly Geometry
+-----------------------------------------------------
+
+Ray tracing is fastest for scenes where *triangles are all about the same size*.
+Large triangles are _slower_ than small ones because they trigger false positives
+and require the triangle intersection test to execute and can't be eliminated
+by the BVH-node bounding box test.
+
+Meshes should be as close as possible to *regular grid tessellation* instead of using
+triangle fans. Where a lot of triangles come together at a shared vertex the BVH
+can be forced to include all of those triangles within the same bounding box.
+
+*Disable back-face culling for ray tracing*. Backface hits shorten the ray during 
+traversal and speed tracing. For DDGI you want backface hits (and set them to black)
+anyway for closest hits to avoid leaks.
+
+Avoid *alpha test*, which interupts traversal and causes extra callbacks. For foliage,
+just shrink the texture cards and submit them the the BVH without alpha. For fences, remove
+them from the BVH entirely. Decals can usually be eliminated entirely from indirect light
+computation without significantly affecting the result.
+
+*BVH refit* is about 10x faster than BVH build (and sometimes 100x or more faster). 
+Avoid rebuilding the BVH whenever possible.
+
+*Launch rays with coherence*. The probes naturally bin rays: they either have the same
+origin or same direction. Fire groups of rays that share an origin together when probes
+are sparse, and if the probes are very dense in your scene, instead fire them in groups
+that share a direction (from different probes). These correspond to the rows and columns
+of the hit textures.
+
+*Use instancing* in the ray tracing API rather than flattening instances. This can significantly
+reduce memory consumption.
+
+
+Other Leak Avoidance
+=====================================================
+
+*Have the hit shader mark backfaces as completely absorptive (black).*
+The visibility test is designed to make a short and smooth transition 
+between lighting conditions because a sharp transition would have
+objects creating hard indirect shadows. 
+
+This means that _inside_ a wall, there is an indirect lighting
+gradient between the outside conditions on each side. The geometry of
+the wall itself conceals this transition in typical situations.
+
+However, for multi-bounce indirect lighting, if the inside of the wall
+is the same color as the outside, then that light inside the wall will
+bounce around _inside_ the wall. That creates a potentially bright
+interior within the wall that will then transition smoothly outside
+and create light leaks corners.
+
+By having the inside of the wall absorb all light, the transition
+region cannot be indirectly reflected within the wall and therefore
+will not leak.
+
+
+*Reduce the distance stored in the probe for backfaces.* We scaled
+distance by 2/10. This makes probes inside of walls contribute much less
+by increasing the amount that they are shadowed, and allows a smaller
+normal bias term. This term is especially important for the case where
+probes are a short distance inside a large wall, where the distance from
+the probe directly to a wall is small and at a more glancing angle it
+can be very far. This will fix dark leaks near corners.
+
+
+Cascades
+=====================================================
+
+TODO
+Cascades: Wrapping math, steal lighting, fade lighting at
+transitions. Store global probe offsets for simplicity
+
+
+
+Probe Placement
+=====================================================
+
+The visibility terms allow probes to function correctly and avoid most
+leaks even when some land inside of walls or in other useless and
+unfortunate locations. When probes are placed poorly, they still
+consume space and time resources, and _more_ probes are needed than if
+the layout is well-adapted to the scene.
+
+A simple precomputed probe placement optimizer can improve both visual
+fidelity and performance. We recommend performing this step for static
+geometry in entertainment applications, and then also allowing artists
+to manually shift individual probes if they wish. As always, our goals
+are to accelerate artist workflow and minimize system complexity. Good
+visibility allows us to maximize the payoff of optimization and
+individual artist interventions without _relying_ exclusively on those
+and thus keeps the advantage while removing most of the burden of
+getting them perfect.
+
+(It is possible to move the probes at runtime as well to adapt to
+changes in infrequently-moving geometry, such as doors or movable set
+pieces. We have not explored this yet.)
+
+Each probe may move up to half a grid cell in each dimension without
+affecting the indexing. In other words, there is a dual grid that bounds
+the probe locations. In practice, we want to avoid shifting neighbor
+probes into each other to avoid reduncancy. So, something like limiting
+shifts to at most 40% of the grid extent along each axis is best.
+
+From early experience working with DDGI on game scenes and some
+extensive academic research that preceeds that, our main heuristics for
+probe placement are below. "Walls" refers to to any large
+occluder, such as ceilings and floors, cliffs, and major set pieces.
+
+In order of decreasing significance:
+
+1. *Near walls*. When an object lies between a wall and a probe
+   (with the next row of probes thus inside or beyond the wall), there
+   is no good shading information for the side of that object that
+   faces the wall. Our shaders have fallback paths for this case where
+   all of the visibility terms are zero, but we can improve image
+   quality by reducing these. The best place for probes the final
+   plane of probes in a scene is therefore close to the wall, so that
+   it is hard for objects to come between the probe and the wall. This
+   is relatively easy to accomplish: apply a gravity- or spring-like
+   term in a relaxation optimizer that moves probes towards front faces
+   observed in their depth maps. This process must be done by relaxation
+   because as the probe moves, parallax changes where it observes nearby
+   surfaces and the direction may shift.
+   
+2. *Outside of walls*. This is obvious, but it is hard to
+   implement. That is because it is hard to algorithmically
+   distinguish "inside" from "outside" of an object in game
+   scenes. Geometry often interpentrates, so that insides of objects
+   still see front faces, and the area "outside" the walls of interior
+   passages does not have line of sight to infinity or other metrics
+   used to determine inside and outside. We approximate by assuming a
+   location is inside of a wall if it observes backfaces in more than
+   30% of directions on closest-hit traces. When a probe is inside of
+   a wall, it can either be disabled (flag to not receive updates and
+   always have weight zero during gathering), or moved. Moving a probe
+   is simple: investigate random adjacent locations and see if they
+   are better.
+
+3. *Near traversal paths*. Many games have explicit traversal meshes
+   or graphs that specify player-character legal positions or are used
+   by non-player characters for path finding. Because characters are
+   likely to be near these, they make an excellent place to put
+   probes. Apply more gravity-like terms to pull probes towards these.
+   
+4. *Away from complex geometry*. A probe that is tucked into the gaps
+   in a pile of rubble has a non-representative view of the
+   surrounding lighting.  It would be better to put that probe over
+   the pile instead of inside of it. We have two ways to detect these
+   situations independent of lighting.  The first is to creat a sphere
+   of low-resolution, point-sampled radial distance and [world space]
+   normal information. If these spherical textures differ
+   significantly when the probe origin is changed slightly, then it is
+   in a location that is not representative and should be moved (for
+   example, to another random nearby location, although often up is a
+   good direction to test first). The second test is geometric. If
+   there is a high volumetric vertex count distributed throughout the
+   probe's surrounding dual grid cell (this can be detected by
+   examining the ray tracing BVH, or simply the original unstructured
+   geometry), then it is probably in a "cloud" of complicated geometry
+   such as foliage or rubble and should be relocated.
+   
+
+Fine Detail
+=====================================================
+
+TODO: DDGI handles meter-scale indirect lighting effects.  screen-space radiosity[^Mara2016DeepGBuffer].
+
+
+
+
+
+   
+
+[ <== Previous Page: Implementation Details](implementation.html)
+
+
+[^Mara2016DeepGBuffer]: Mara, McGuire, Nowrouzezahrai, and Luebke, Deep G-Buffers for Stable Global Illumination Approximation, HPG, in Proceedings of the High Performance Graphics 2016, June 24, 2016, 11 pages
 
 
                                * * * *

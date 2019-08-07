@@ -2,7 +2,7 @@
       **Dynamic Diffuse Global Illumination**
       Part 1
       2019 April 1
-      Updated May 5
+      Updated May 22
 
 Dynamic Diffuse Global Illumination (DDGI) is a technique for computing
 diffuse lighting with ray tracing to create changing, realistic rendering
@@ -14,6 +14,15 @@ Hardware-accelerated programmable ray tracing is now accessable
 through DXR, VulkanRT, OptiX, Unreal Engine, and Unity. This enables
 many ways to compute global illumination. DDGI is a new strategy for
 lighting that expands developers' options.
+
+Article contents:
+
+1. [*This introduction*](index.html) to DDGI
+2. [*Real-time global illumination*](intro-to-gi.html). What everyone in graphics should know.
+2. [*DDGI overview*](overview.html) for choosing your GI strategy
+3. [*Algorithm explanation*](algorithm.html) for programmers and researchers
+4. *Implementation guide* to structure your integration plan  (coming soon)
+5. *Production optimization* techniques for peak performance  (coming soon)
 
 
 VFX Breakdown
@@ -77,7 +86,7 @@ The major costs and limitations of DDGI are:
 
 
 
-Details
+More Information
 ==========================================================
 
 This article explains DDGI in several parts:
@@ -85,7 +94,7 @@ This article explains DDGI in several parts:
 1. [*This introduction*](index.html) to DDGI
 2. [*Real-time global illumination*](intro-to-gi.html). What everyone in graphics should know.
 2. [*DDGI overview*](overview.html) for choosing your GI strategy
-3. *Algorithm explanation* for programmers and researchers (coming soon)
+3. [*Algorithm explanation*](algorithm.html) for programmers and researchers
 4. *Implementation guide* to structure your integration plan  (coming soon)
 5. *Production optimization* techniques for peak performance  (coming soon)
 
@@ -109,9 +118,8 @@ An early version of DDGI is also described in the peer-reviewed research paper,
 >  **Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Probes**,
 >  [Journal of Computer Graphics Tools](http://jcgt.org/), April 2019 (to appear)
 
-with our academic collaborators at McGill and the University of Montreal. 
-I'll present this for a scientific audience at [I3D'19](http://i3dsymposium.github.io/2019/) 
-in May.
+with our academic collaborators at McGill and the University of Montreal. That
+version was presented for a scientific audience at [I3D'19](http://i3dsymposium.github.io/2019/).
 
 
 <table width=100%><tr><td style="text-align:right">[Next Page: Global Illumination ==> ](intro-to-gi.html)</td></tr></table> 

@@ -1,12 +1,63 @@
 <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
-      **Part 3: Algorithm Explanation**
+      **Part 4: Algorithm Explanation**
       [Dynamic Diffuse Global Illumination](index.html)
       2019 April 16
-      Updated 2019 April 16
+      Updated 2019 May 23
+
+
+<!-- <table width=100%><tr><td>[ <== Previous Page: DDGI Overview](overview.html)</td><td style="text-align:right">[Next Page: Implementation Details ==> ](implementation.html)</td></tr></table>  -->
+<table width=100%><tr><td>[ <== Previous Page: DDGI Overview](overview.html)</td><td style="text-align:right">Coming Soon: Implementation Details</td></tr></table>
+
+This part of the DDGI article explains the algorithm in detail for
+industry programmers, researchers, and scientists seeking to implement
+it. This focuses on the mathematical concepts and opportunities for
+making your own design decisions and potential improvements for a
+minimal prototype implementation.
+
+The following part gives a checklist for steps for a full production
+DDGI implementation when integrating into an existing rendering
+system, with recommendations for the best practices we use with NVIDIA
+partners.
+
+## Sampling 
+
+DDGI supports efficient sampling of the irradiance field at _any_
+point $X$ in a scene relative to a surface normal $\n$ by a single
+shader function[^shader]:
+
+`Color3 sampleDDGI(Point3 X, Vector3 n, DDGIVolume ddgi);`
+
+The `sampleDDGI` function can be called from anywhere.  For example, a
+deferred-shading compute or full-screen pixel shader, rasterization
+forward shader, volumetric ray marcher, texture-space shading routine,
+or ray hit shader.
+
+Because DDGI encodes incoming light, shading simply involes modulating
+the sampled result by the scattering function (BSDF). Combined with a
+glossy term computed from an environment-map or by ray tracing, the
+net _outgoing_ light
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GLSL
+Radiance3 L =
+    lerp(glossyLight, 
+         lambertianReflectivity * sampleDDGI(X, n, ddgi),
+         fresnel);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
-<table width=100%><tr><td>[ <== Previous Page: DDGI Overview](implementation.html)</td><td style="text-align:right">[Next Page: Implementation Details ==> ](implementation.html)</td></tr></table> 
+[^shader]: I use macros to rename `vec3`/`float3` shader types to be
+self-documenting, so imagine `#define Color3 float3` and so on in some
+header file. All of the support code for our reference implementation
+is directly available in the [G3D Innovation Engine](https://casual-effects.com).
+
+
+## Radial Gaussian Distance
+
+DDGI contains three terms that manage the visibility
+
+<!-- <table width=100%><tr><td>[ <== Previous Page: DDGI Overview](overview.html)</td><td style="text-align:right">[Next Page: Implementation Details ==> ](implementation.html)</td></tr></table>  -->
+<table width=100%><tr><td>[ <== Previous Page: DDGI Overview](overview.html)</td><td style="text-align:right">Coming Soon: Implementation Details</td></tr></table>
 
                                * * * *
 
