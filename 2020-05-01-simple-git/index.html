@@ -34,7 +34,7 @@ Essential things to know:
   giving idioms for sweeping changes appropriate for small, usually
   academic groups who just want to synchronize files with each other.
   
-- You'll hear about different ways of handling large files and
+- You may hear about different ways of handling large files and
   repos. "LFS" is the current practice. `git-annex` is obsolete. 
   "[Partial Clone](https://about.gitlab.com/blog/2020/03/13/partial-clone-for-massive-repositories/)"
   and
@@ -54,7 +54,8 @@ Essential things to know:
 
 - Git branches are not in a hierarchical namespace, are all equally
   authoritative, and can be arbitrarily merged into each other in any
-  direction. Most large projects impose a hierarchical worklow by
+  direction. You see only one at any time in your workspace, as a view of the
+  repo. Most large projects impose a hierarchical worklow by
   convention. When you have a local workspace, you generally have
   _all_ branches stored on your machine but are only looking at one at
   a time.
@@ -419,18 +420,28 @@ git stash pop
 Branches
 =================================================================================
 
+Create
+---------------------------------------------------------------------------------
 Create a branch and switch to it:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git checkout -b <newbranchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Discover
+---------------------------------------------------------------------------------
 
 List all branches:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git branch
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+You are currently on the one that prints with an asterisk.
+For scripting purposes, you can generate just that branch name with 
+the command `git rev-parse --abbrev-ref HEAD`.
+
+Change
+---------------------------------------------------------------------------------
 
 Switch your workspace to another branch (including one that someone
 else created or `master`), losing any uncommitted changes:
@@ -438,6 +449,9 @@ else created or `master`), losing any uncommitted changes:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git checkout <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Merge (CLI)
+---------------------------------------------------------------------------------
 
 Merge another branch _into the current one_ (which might be `master`):
 
@@ -448,6 +462,9 @@ git merge <sourcebranchname>
 
 git commit -am "merge" && git push
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Merge (Web)
+---------------------------------------------------------------------------------
 
 To submit a "pull request" for someone else to approve and merge
 from your branch to another (usually `master`) using the website: 
@@ -463,6 +480,9 @@ Merge a pull request on the website:
 2. Select a request
 3. Follow the GUI options
 
+
+Delete
+---------------------------------------------------------------------------------
 
 Delete a branch:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
