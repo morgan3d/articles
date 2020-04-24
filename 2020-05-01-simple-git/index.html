@@ -10,66 +10,8 @@ the free hosting that comes with github.
 
 I'm assuming that you're using github or your institution's gitlab
 installation, so there's a website for creating and managing your
-repo.
-
-Essential things to know:
-
-- *Use the command line.* Git has a complicated model and complicated
-  commands, and you can get into some nasty states that are hard to
-  recover from if using a GUI blindly. Really, the command line is
-  _less_ confusing in this situation.
-
-- Almost all git commands will do the same thing if run anywhere in
-  the repository. There's no notion of a per-file version.
-  
-- Pushed commits are generally permanent. Once anything is in the repository,
-  it is visible to everyone and takes up space forever. 
-  If you accidentally commit a password or humongous file then you either
-  have to delete and recreate the entire repo or engage some very hardcore
-  commands. Search for "editing history", `git rebase`, and `git filter-branch`.
-  If it was a large or binary file in LFS, then deleting the repo is the only
-  choice.
-  
-- There are lots of options for commands and other commands. I'm
-  giving idioms for sweeping changes appropriate for small, usually
-  academic groups who just want to synchronize files with each other.
-  
-- You may hear about different ways of handling large files and
-  repos. "LFS" is the current practice. `git-annex` is obsolete. 
-  "[Partial Clone](https://about.gitlab.com/blog/2020/03/13/partial-clone-for-massive-repositories/)"
-  and
-  "[Sparse Checkout](https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/)"
-  are compatible with LFS and intended to eventually replace it, but
-  have inconsistent support (and billing, on github) as of the year
-  2020 and git 2.26.
-  
-- The default branch is called "`master`". If you have to supply a
-  branch name to a command and don't know what is going on, that's the
-  one that you want. Other branches are alternative realities that can
-  be merged to/from each other and master arbitrarily and
-  explicitly. If you create a branch, then everyone knows about it.
-  Simple branching in git is not too hard, although for solo work or
-  small teams, you can probably work directly in master. Merging often
-  involves a combination of the website and command-line work.
-
-- Git branches are not in a hierarchical namespace, are all equally
-  authoritative, and can be arbitrarily merged into each other in any
-  direction. You see only one at any time in your workspace, as a view of the
-  repo. Most large projects impose a hierarchical worklow by
-  convention. When you have a local workspace, you generally have
-  _all_ branches stored on your machine but are only looking at one at
-  a time.
-
-- The "`HEAD`" is the latest revision ("commit") in the branch that your
-  local workspace is on. _A_ `"head"` is that commit for any branch.
-  A `"detached HEAD"` means that you're looking at some older revision
-  in a branch.
-  
-- Git refers to versions by long hash values. There is no notion
-  of linearly numbered revisions or dates, although the website features and log
-  let you find the revisions that happened on a specific date and
-  also let you flag "releases" using names similar to svn tags.
-  
+repositories. I'll call that "the website".
+ 
 Most of the operations below are standard concepts across all version
 control systems. I mention some more git-specific features that are
 occasionally handy but not too hardcore at the bottom. If you want to
@@ -79,6 +21,95 @@ this is the wrong article for you to read.
 All commands I give below are identical on Windows, macOS, and Linux,
 except for installing git itself and the repo initialization "ignore"
 line.
+
+
+Overview
+=================================================================================
+
+If you're completely new to version control, then I recommend
+the Version Control Basics chapter of the [Graphics Codex](http://graphicscodex.com/)
+that I wrote covering svn, git, and other systems.
+
+If you're already familiar with version control as a concept, then
+the essential differences of git for you are:
+
+- *Use the command line.* Git has a complicated model and complicated
+  commands, and you can get into some nasty states that are hard to
+  recover from if using a GUI blindly. Really, the command line is
+  _less_ confusing in this situation.
+
+- Most git commands are not sensitive to where in the local workspace
+  directory tree they are run. There's no notion of a per-file version,
+  so most commands affect the entire workspace.
+  
+- Pushed commits are generally permanent. Once anything is in the repository,
+  it is visible to everyone and takes up space forever. 
+  If you accidentally commit a password or humongous file then you either
+  have to delete and recreate the entire repo or engage some very hardcore
+  commands. Search for "editing history", `git rebase`, and `git filter-branch`.
+  If it was a large or binary file in LFS, then deleting the repo is the only
+  choice.
+
+- Read access control is per-repository. Write access control is per-branch.
+  Both are managed via the website. There is no per-directory access control.
+
+- There are lots of options for commands and other commands. I'm
+  giving idioms for sweeping changes appropriate for small, usually
+  academic groups who just want to synchronize files with each other.
+  People have strangely strong feelings about git. Some of them will
+  be happy to tell you how misinformed and heretical my idioms are.
+  
+- You may hear about different ways of handling large files and
+  repositories. "LFS" is the current practice. `git-annex` is obsolete. 
+  "[Partial Clone](https://about.gitlab.com/blog/2020/03/13/partial-clone-for-massive-repositories/)"
+  and
+  "[Sparse Checkout](https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/)"
+  are compatible with LFS and intended to eventually replace it, but
+  have inconsistent support (and billing, on github) as of the year
+  2020 and git 2.26.
+  
+- Git refers to versions (aka "commits") by long hash values. There is no notion
+  of linearly numbered revisions or dates, although the website features and log
+  let you find the revisions that happened on a specific date and
+  also let you flag "releases" using names similar to svn tags.
+
+- Git branches are different realities of the repository. They are not
+  in a hierarchical namespace, are all equally authoritative, and can
+  be arbitrarily merged into each other in any direction. You see only
+  one at any time in your workspace, as a view of the repo. Most large
+  projects impose a hierarchical worklow by convention. When you have
+  a local workspace, you generally have _all_ branches stored on your
+  machine but are only looking at one at a time. Everyone can see all
+  branches that have been pushed.
+  
+- The default branch is called "`master`". If you have to supply a
+  branch name to a command and don't know what is going on, that's the
+  one that you want. Simple branching in git is not too hard, although
+  for solo work or small teams, you can probably work directly in
+  master. I usually do.
+
+- The "`HEAD`" is the latest revision ("commit") in the branch that your
+  local workspace is viewing. _A_ `"head"` is that revision for any branch.
+  A `"detached HEAD"` means that you're looking at some older revision
+  in a branch (and should probably return to the latest revision before
+  doing new work there).
+
+- github currently offers free hosting for unlimited numbers of _small_ (by my standards) public and private repositories.
+  In each repository, the [current limits](https://help.github.com/en/github/managing-large-files/what-is-my-disk-quota) are:
+  
+   - Practical 1 GB limit for the whole repository (including history and branches!)
+   - Theoretical 75 GB limit
+   - Definitive 100 GB limit
+   - 100 MB per non-LFS file
+   - 1 GB total [LFS](https://help.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-git-large-file-storage) (across all repositories) and 1 GB bandwidth for free
+   - Additional LFS in increments of $5/month per 50 GB
+
+- gitlab is an alternative site with different pricing, which also allows and you to download their
+  installation to make your own institutional github equivalent. 
+  
+- Bitbucket, Sourceforge, etc. are other hosted git sites with other pricing schemes.
+
+
 
 
 Install
@@ -398,6 +429,18 @@ git reset --hard
 git checkout master
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Static Web Hosting
+=================================================================================
+
+If you're using github specifically, then you can use the feature called "github pages"
+to host a version of your repository directly on their website. This is very convenient
+for making project pages, friendly indexes of your content, or even blogs and static
+web applications. This article is hosted on github pages.
+
+TODO: how to set up github pages
+
+N.B. doesn't work with LFS files!
+
 
 Stash
 =================================================================================
@@ -450,7 +493,7 @@ else created or `master`), losing any uncommitted changes:
 git checkout <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Merge (CLI)
+Merge (Manual CLI)
 ---------------------------------------------------------------------------------
 
 Merge another branch _into the current one_ (which might be `master`):
@@ -463,7 +506,7 @@ git merge <sourcebranchname>
 git commit -am "merge" && git push
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Merge (Web)
+Merge (Web Pull Request)
 ---------------------------------------------------------------------------------
 
 To submit a "pull request" for someone else to approve and merge
@@ -488,6 +531,7 @@ Delete a branch:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git push origin -d <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 <style>
 body, .md a { font-family: Arial }
