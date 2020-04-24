@@ -169,8 +169,8 @@ the `https` versions of the git URLs.
 Initialize
 =================================================================================
 
-Initialize a new repository that was _just_ created and cloned. Do
-this from the root of that repository only once per repository ever
+Initialize a new repository that was _just_ created and cloned. Perform
+this from the root of the workspace only once per repository ever
 (not per user or per machine).
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
@@ -344,8 +344,8 @@ git checkout -- <filename>
 Already Pushed
 --------------------------------------------------------------------------------
 Someone (maybe you) made changes and committed and pushed them, and
-now you want the repo to go back to the way that it was before that
-happened:
+now you want the repository to go back to the state that it was in
+before those pushed commits happened:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 # Look at the log to find the commit hash
@@ -390,12 +390,6 @@ To undo uncommitted changes that you've made since your last commit while offlin
 git reset --hard
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-To undo uncommitted changes that you've made since your last commit while offline: 
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
-git reset --hard
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To roll back both uncommitted changes _and_ the last commit that you made 
 while offline (`~1` means "go back _one_ commit"; you can do "~2" etc. The default
