@@ -447,20 +447,24 @@ N.B. doesn't work with LFS files!
 Stash
 =================================================================================
 
-Undo to the last `git push`, but save the changes (...on a stack, which
-is not called "pushing" because that name was already used for
-"upload"):
+_We're now into somewhat more advanced commands_
+
+Undo to the last `git push` so that you can fix a new problem in the middle of your
+other work, but save the changes were were working on to return to:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git stash save "message"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get back to what you stashed:
+Later, get back to what you stashed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git stash pop
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+(The last command is "pop" because stashes form a stack. The first
+command is not called "push" presumably because that name was already
+used for "upload".)
 
 Branches
 =================================================================================
