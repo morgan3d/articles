@@ -80,7 +80,7 @@ the essential differences of git for you are:
   projects impose a hierarchical worklow by convention. When you have
   a local workspace, you generally have _all_ branches stored on your
   machine but are only looking at one at a time. Everyone can see all
-  branches that have been pushed.
+  [remote] branches that have been pushed.
   
 - The default branch is called "`master`". If you have to supply a
   branch name to a command and don't know what is going on, that's the
@@ -500,6 +500,13 @@ used for "upload".)
 Branches
 =================================================================================
 
+I'm describing what git calls "remote" branches, which are what you want if you're
+only using one kind. There are also "local branches" and "local nontracking branches".
+
+Subversion branches are lazy-copied entire directories and such a different concept
+from git branches that I chose not to include analogous commands here.
+
+
 Create
 ---------------------------------------------------------------------------------
 Create a branch and switch to it:
@@ -507,6 +514,7 @@ Create a branch and switch to it:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git checkout -b <newbranchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 Discover
 ---------------------------------------------------------------------------------
@@ -566,7 +574,7 @@ Delete
 
 Delete a branch:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
-git push origin -d <branchname>
+git push --delete origin <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
