@@ -398,7 +398,9 @@ git reset --hard
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To roll back both uncommitted changes _and_ the last commit that you made 
-while offline (`~1` means "one commit"; you can do "~2" etc.): 
+while offline (`~1` means "go back _one_ commit"; you can do "~2" etc. The default
+is `"HEAD~0"`, which is just "go back to the state of the last commit" from
+the previous idiom): 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git reset --hard HEAD~1
