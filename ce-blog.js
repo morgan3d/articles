@@ -5,7 +5,7 @@ function addBlogRunner() {
 <table><tr valign=top><td><img src="https://casual-effects.com/morgan/headshots/mcguire-square-small.png" width="200px" style="border:1px solid #888"></td><td width="30px"> </td><td>
 <i style="font-size:95%">
 This is a personal blog article by <a href="https://casual-effects.com">Morgan
-McGuire</a>. Morgan is a director of research at NVIDIA and holds faculty appointments at
+McGuire</a> [<a href="https://twitter.com/CasualEffects">@CasualEffects</a>]. Morgan is a director of research at NVIDIA and holds faculty appointments at
 the University of Waterloo and McGill University.
 
 <p>He is the author of the <a
