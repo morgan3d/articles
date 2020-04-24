@@ -441,17 +441,6 @@ For more information, see https://github.blog/2020-01-17-bring-your-monorepo-dow
 Help!
 =================================================================================
 
-Detached HEAD
----------------------------------------------------------------------------------
-You encounted "detached HEAD" and didn't expect this, weren't
-intentionally using branches, don't have changes that you want, and
-just want everything to go back to the last commit:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
-git reset --hard
-git checkout master
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 Bad Merge Conflicts
 ---------------------------------------------------------------------------------
 
@@ -465,10 +454,10 @@ git merge --abort
 
 You will now be at your last commit, where you were immediately before you pulled.
 You're going to have to deal with that merge at _some_ point, though. You've only
-pushed the problem down the road.
+kicked the problem down the road.
 
-If you instead want to discard all of your unpushed changes and have clean
-state the equivalent to a fresh clone of the master branch, use:
+If you instead want to discard all of your own unpushed changes and have clean
+state matching a fresh clone of the master branch, use:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git merge --abort && git reset --hard origin/master && git pull
@@ -476,6 +465,20 @@ git merge --abort && git reset --hard origin/master && git pull
 
 (Equivalent in subversion to deleting the conflicted files and then running
 `svn update`)
+
+
+Detached HEAD
+---------------------------------------------------------------------------------
+You encounted "detached HEAD" and didn't expect this, weren't
+intentionally using branches, don't have changes that you want, and
+just want everything to go back to the last commit:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git reset --hard
+git checkout master
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Really, only one is probably necessary, but you're in a bad way here)
 
 
 Static Web Hosting
