@@ -57,12 +57,20 @@ Essential things to know:
   A `"detached HEAD"` means that you're looking at some older revision
   in a branch.
   
-Most of these are standard operations across all version control
-systems. I mention some more git-specific features that are
-occasionally handy but not too hardcore at the bottom.
+- Git refers to versions by long hash values. There is no notion
+  of linearly numbered revisions or dates, although the website features and log
+  let you find the revisions that happened on a specific date and
+  also let you flag "releases" using names similar to svn tags.
+  
+Most of the operations below are standard concepts across all version
+control systems. I mention some more git-specific features that are
+occasionally handy but not too hardcore at the bottom. If you want to
+get hardcore, then there's as much depth as you could want in git, but
+this is the wrong article for you to read.
 
-All commands I give below are identical on Windows, macOS, and Linux, except
-for installing git itself and the repo initialization "ignore" line.
+All commands I give below are identical on Windows, macOS, and Linux,
+except for installing git itself and the repo initialization "ignore"
+line.
 
 
 Install
@@ -181,7 +189,7 @@ yet with `git pull`. Git will give you a clear message in this case, but it is
 easy to ignore in all of the progress spam that it prints, so be sure to look
 for confirmation that you've actually pushed.
 
-(Equivalent to `svn commit -m "message"` in the repo root)
+(Equivalent to `svn commit -m "message"` in the workspace root)
 
 
 Download
@@ -193,7 +201,7 @@ Download the changes that others have made to your local machine.
 git pull
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(Equivalent to `svn update` in the repo root)
+(Equivalent to `svn update` in the workspace root)
 
 
 Status
@@ -205,7 +213,7 @@ Show me all files I've changed since my last pull:
 git status
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(Equivalent to `svn status` in the repo root)
+(Equivalent to `svn status` in the workspace root)
 
 
 Compare
@@ -273,7 +281,11 @@ You just edited some files, issued no git commands except maybe
 git reset --hard
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(Equivalent to `svn revert <filename>` in the repo root, but works offline)
+This is the same as running `git checkout -- .` in the workspace root. The
+`--hard` makes the command seem a little scarier, but it is just another ill-named
+git option and not doing anything extreme.
+
+(Equivalent to `svn revert <filename>` in the workspace root, but works offline)
 
 
 Only One File
@@ -291,9 +303,17 @@ git checkout -- <filename>
 Already Pushed
 --------------------------------------------------------------------------------
 Someone (maybe you) made changes and pushed them, and now you want the repo
-to go back to the way that it was before that happened.
+to go back to the way that it was before that happened:
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+# Look at the log to find the commit hash
+git log 
 
+# Go back to the hash
+git revert <hash>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The hash will be a long, hexadecimal number such as `cf80d8dbacc6fc90e3c86a5f1dac615bd9aab1ae`.
 
 
 Repo URL
