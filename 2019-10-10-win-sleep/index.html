@@ -1,0 +1,23 @@
+<meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/apidoc.css?">
+         **Make Windows not Wake from Sleep**
+
+I often sleep my machines when I leave the office at night and come in the next morning to find them wide awake and consuming power. Or, my happily sleeping laptop wakes up in my backpack and then overheats.
+
+I've used the following settings to reduce these problems and try to keep Windows from waking up the machine:
+
+
+* Use `powercfg /lastwake` in `CMD.exe` to diagnose problems
+
+* Set Power & Sleep --> Additional Options --> Change Plan settings --> Change Advanced power settings --> Sleep --> allow Wake Timers: false
+
+* Device Manager --> Network Adapters --> Properties --> Power Management tab --> uncheck "Allow this device to wake the computer" 
+
+* Device Manager --> Mouse --> Additional mouse options --> Hardware --> Change Settings --> Power Management tab --> uncheck "Allow this device to wake the computer" 
+
+
+
+<script>markdeepOptions={tocStyle:'none'};</script>
+<style>h1 {margin-top:50px; padding-bottom:6px; border-bottom: 1px solid #555}
+em.asterisk { font-style: normal; font-weight: bold; }</style>
+<script src="../ce-blog.js"> </script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
