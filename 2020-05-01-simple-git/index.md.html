@@ -176,6 +176,11 @@ The `-a` part of the command is specifically including all of your changes. Git
 has ways of commiting only individual changes if you need a scalpel instead of
 a hammer.
 
+Beware that your push may fail if there are changes that you haven't downloaded
+yet with `git pull`. Git will give you a clear message in this case, but it is
+easy to ignore in all of the progress spam that it prints, so be sure to look
+for confirmation that you've actually pushed.
+
 (Equivalent to `svn commit -m "message"` in the repo root)
 
 
