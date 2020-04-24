@@ -434,14 +434,26 @@ git checkout master
 Static Web Hosting
 =================================================================================
 
-If you're using github specifically, then you can use the feature called "github pages"
-to host a version of your repository directly on their website. This is very convenient
-for making project pages, friendly indexes of your content, or even blogs and static
-web applications. This article is hosted on github pages.
+If you're specifically using github for repository hosting, then you
+can also use the feature called "github pages" to host a version of
+your repository directly on their website. This is very convenient for
+making project pages, friendly indexes of your content, or even blogs
+and static web applications. This article is hosted on github pages.
 
-TODO: how to set up github pages
+1. On the repository git website, click on "Settings". 
+2. Scroll down to "GitHub Pages".
+3. Under "source", select either "master branch" or "master branch /docs folder",
+   as you prefer.
 
-N.B. doesn't work with LFS files!
+The page will then display the URL at which your repo is hosted. Note that it
+is on github.io, not github.com, for security reasons. It updates nearly instantaneously
+after a push to master.
+
+You can host any static web content using this feature. There are some limited 
+features for dynamic content and database access as well.
+
+This does _not_ work with LFS files. They will simply appear as the underlying git
+references to the file.
 
 
 Stash
