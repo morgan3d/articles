@@ -471,9 +471,7 @@ If you instead want to discard all of your unpushed changes and have clean
 state the equivalent to a fresh clone of the master branch, use:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
-git merge --abort
-git reset --hard origin/master
-git pull
+git merge --abort && git reset --hard origin/master && git pull
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
