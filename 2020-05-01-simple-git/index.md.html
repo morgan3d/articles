@@ -1,0 +1,396 @@
+              <meta charset="utf-8" emacsmode="-*- markdown -*-">
+                     **Simple git Recipies**
+                          2020-05-01
+
+Maybe you're new to revision control and need to know the basic
+commands for `git` to get on with your project. Maybe you're
+experienced with subversion and it worked well for you, but the new
+engineer/faculty/students/IT folks like git. Almost certainly you want
+the free hosting that comes with github.
+
+I'm assuming that you're using github or your institution's gitlab
+installation, so there's a website for creating and managing your
+repo.
+
+Essential things to know:
+
+- *Use the command line.* Git has a complicated model and complicated
+  commands, and you can get into some nasty states that are hard to
+  recover from if using a GUI blindly. Really, the command line is
+  _less_ confusing in this situation.
+
+- Almost all git commands will do the same thing if run anywhere in
+  the repository. There's no notion of a per-file version.
+  
+- Pushed commits are generally permanent. Once anything is in the repository,
+  it is visible to everyone and takes up space forever. 
+  If you accidentally commit a password or humongous file then you either
+  have to delete and recreate the entire repo or engage some very hardcore
+  commands. Search for "editing history", `git rebase`, and `git filter-branch`.
+  If it was a large or binary file in LFS, then deleting the repo is the only
+  choice.
+  
+- There are lots of options for commands and other commands. I'm
+  giving idioms for sweeping changes appropriate for small, usually
+  academic groups who just want to synchronize files with each other.
+  
+- You'll hear about different ways of handling large files and
+  repos. "LFS" is the current practice. `git-annex` is obsolete. 
+  "[Partial Clone](https://about.gitlab.com/blog/2020/03/13/partial-clone-for-massive-repositories/)"
+  and
+  "[Sparse Checkout](https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/)"
+  are compatible with LFS and intended to eventually replace it, but
+  have inconsistent support (and billing, on github) as of the year
+  2020 and git 2.26.
+  
+- The default branch is called "`master`". If you have to supply a
+  branch name to a command and don't know what is going on, that's the
+  one that you want. Other branches are alternative realities that can
+  be merged to/from each other and master arbitrarily and
+  explicitly. If you create a branch, then everyone knows about it.
+  Simple branching in git is not too hard, although for solo work or
+  small teams, you can probably work directly in master. Merging often
+  involves a combination of the website and command-line work.
+
+- The "`HEAD`" is the latest revision ("commit") in the branch that your
+  local workspace is on. _A_ `"head"` is that commit for any branch.
+  A `"detached HEAD"` means that you're looking at some older revision
+  in a branch.
+  
+Most of these are standard operations across all version control
+systems. I mention some more git-specific features that are
+occasionally handy but not too hardcore at the bottom.
+
+All commands I give below are identical on Windows, macOS, and Linux, except
+for installing git itself and the repo initialization "ignore" line.
+
+
+Install
+=================================================================================
+
+Once per machine, you need to install git and LFS (Large File Storage).
+
+macOS
+---------------------------------------------------------------------------------
+
+1. Use the version of git that comes with Xcode, or install via GUI pkg from https://sourceforge.net/projects/git-osx-installer/
+2. Install LFS from https://git-lfs.github.com/
+3. Run `git lfs install` (yes, this is different from step #2)
+
+Windows
+---------------------------------------------------------------------------------
+1. Install git from https://git-scm.com/download/win
+2. Install LFS from TODO
+3. Run `git lfs install` (yes, this is different from step #2)
+
+
+Ubuntu or Debian
+---------------------------------------------------------------------------------
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+sudo apt-get install git 
+sudo apt-get install git-lfs
+git lfs install
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Other Linux
+---------------------------------------------------------------------------------
+1. Download and install git according to https://git-scm.com/download/linux
+2. Install LFS with according to https://github.com/git-lfs/git-lfs/wiki/Installation
+3. Run `git lfs install` (this is different from step #2)
+
+
+Fetch
+=================================================================================
+
+Download a repo.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git clone <repo>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where `<repo>` is a URL that ends with `.git`. You can find it on your
+git website from the green "Clone or download" button on the right
+side of the page. If using your institution's gitlab (vs. github), you may find that the
+"SSH" variant fails silently if they have not configured it properly--I stick with
+the `https` versions of the git URLs.
+
+(Equivalent to `svn checkout`)
+
+
+Initialize
+=================================================================================
+
+Initialize a new repository that was _just_ created and cloned. Do
+this from the root of that repository only once per repository ever
+(not per user or per machine).
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+# Mark large/binary files by extension
+git lfs track "*.pdf" "*.doc" "*.docx" "*.zip" "*.rar" "*.tar" "*.gz" "*.class" "*.dll" "*.so" "*.psd" "*.ico" "*.png" "*.jpg" "*.exr" "*.tga" "*.bmp" "*.gif" "*.ppm" "*.tif" "*.m4a" "*.mpg" "*.mp4" "*.mp3" "*.aiff" "*.avi" "*.wav" "*.mov" "*.dxf" "*.fbx" "*.max" "*.mb" "*.ma" "*.ply" "*.obj" "*.3ds" "*.pk3" "*.md2" "*.md3" "*.ttf" "*.woff"
+
+# Ignore certain file patterns. Add your own to this
+echo $'*~\nlog.txt\n*.log\n*.pyc' > .gitignore
+
+git add .gitignore .gitattributes
+git commit -am "Initial config" && git push
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On Windows, there's no simple way to echo a newline, so create the `.gitignore` file
+in a text editor.
+
+(Equivalent to a lot of `svn propset` commands)
+
+
+Add
+=================================================================================
+
+You've created a new file or directory that you want in the repo.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git add <filename>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The command is automatically recursive if adding a directory.
+
+You still have to upload the file(s). 
+
+Note that running `git add` on a file that is already in the repo does
+something _different_, but relatively innocuous.
+
+(Equivalent to `svn add`)
+
+
+
+Upload
+=================================================================================
+
+Take all of the changes that you've made locally and upload them to the server.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git commit -am "log message" && git push
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `-a` part of the command is specifically including all of your changes. Git
+has ways of commiting only individual changes if you need a scalpel instead of
+a hammer.
+
+(Equivalent to `svn commit -m "message"` in the repo root)
+
+
+Download
+=================================================================================
+
+Download the changes that others have made to your local machine.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git pull
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn update` in the repo root)
+
+
+Status
+=================================================================================
+
+Show me all files I've changed since my last pull:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git status
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn status` in the repo root)
+
+
+Compare
+=================================================================================
+
+Show me what I've changed in a specific file since my last commit:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git diff <filename>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn diff`)
+
+
+Move
+=================================================================================
+
+Relocate or rename a file or directory within the repo:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git mv <src> <dst>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Commit/push soon afterward. The way that this command actually works can cause
+some unpleasant surprises during a merge if someone else edited the file.
+
+(Equivalent to `svn mv` or `svn rename`)
+
+
+Delete
+=================================================================================
+
+Remove a file from the repo, (it is still visible and recoverable in the history):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git rm <filename>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn delete`)
+
+
+Undo
+=================================================================================
+
+This is one place where the complexity of git can really bite
+you. There isn't a straightforward "revert" because committing isn't
+as straightforward as I've made it seem.
+
+For simplicity, I'm assuming that you followed my above idioms and
+never used the "staging" feature of git separately from the `git
+commit` command, or `git commit` separately from `git push`. 
+
+If you get really stuck, beware that it may be faster and safer to
+delete and re-clone the repo than to fix local git state if you aren't
+highly experienced.
+
+
+All Files
+--------------------------------------------------------------------------------
+
+You just edited some files, issued no git commands except maybe
+`git checkout`, and now have regrets. Go back to your last commit:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git reset --hard
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn revert <filename>` in the repo root, but works offline)
+
+
+Only One File
+--------------------------------------------------------------------------------
+You just edited one file, issued no git commands, and now have regrets. Go 
+back to your last commit:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git checkout -- <filename>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn revert <filename>`, but works offline)
+
+
+Already Pushed
+--------------------------------------------------------------------------------
+Someone (maybe you) made changes and pushed them, and now you want the repo
+to go back to the way that it was before that happened.
+
+
+
+
+Repo URL
+=================================================================================
+
+You need the original repo URL, for example, to share it with a colleague or
+to delete and re-clone on your machine:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git config --get remote.origin.url
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Equivalent to `svn info --show-item repos-root-url`)
+
+
+Offline
+=================================================================================
+
+When working without internet access, you might appreciate that git lets separate
+the commit and push, so that you can undo to a checkpoint.
+
+While offline:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git commit -am "log message"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When back online:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git push
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To undo to you last commit while offline: 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git reset --hard
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Partial Clone
+=================================================================================
+
+You have a large repo on the server, and only want to clone some
+subset of directories.  For example, maybe you keep all of your
+homework assignments or blog entries in the same repo and only want
+one.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git clone --no-checkout <repo>
+cd <repodir>
+git sparse-checkout init --cone
+git sparse-checkout set <dir1> <dir2> <...>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each of the `<dir>` entries may be an immediate child of the root or a more complicated
+path into the repo.
+
+For more information, see https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/
+
+(Equivalent to `svn checkout <repo> --depth files; svn update --set-depth infinity <dir1> <dir2> <...>`)
+
+
+
+
+Help! Detached HEAD
+=================================================================================
+
+You encounted "detached HEAD" and didn't expect this, weren't
+intentionally using branches, don't have changes that you want, and
+just want everything to go back to the last commit:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git reset --hard
+git checkout master
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Stash
+=================================================================================
+
+Undo to the last `git push`, but save the changes (...on a stack, which
+is not called "pushing" because that name was already used for
+"upload"):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git stash save "message"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get back to what you stashed:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git stash pop
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<style>
+body, .md a { font-family: Arial }
+.md pre.tilde {font-size: 110%; background: #F8F8F0}
+.md h1:before, .md h2:before, .md h3:before, .md h4:before { content: none; }
+.md h1 {border-bottom: 2px solid #000}
+.md h2 {font-size: 110%; border-bottom: none}
+</style>
+<script>markdeepOptions={tocStyle:'short'}</script>
+<script src="../ce-blog.js"> </script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
