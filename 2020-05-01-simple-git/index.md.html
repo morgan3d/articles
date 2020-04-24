@@ -1,5 +1,5 @@
               <meta charset="utf-8" emacsmode="-*- markdown -*-">
-                     **Simple git Recipies**
+                     **Simple git Recipes**
                           2020-05-01
 
 Maybe you're new to revision control and need to know the basic
@@ -51,6 +51,13 @@ Essential things to know:
   Simple branching in git is not too hard, although for solo work or
   small teams, you can probably work directly in master. Merging often
   involves a combination of the website and command-line work.
+
+- Git branches are not in a hierarchical namespace, are all equally
+  authoritative, and can be arbitrarily merged into each other in any
+  direction. Most large projects impose a hierarchical worklow by
+  convention. When you have a local workspace, you generally have
+  _all_ branches stored on your machine but are only looking at one at
+  a time.
 
 - The "`HEAD`" is the latest revision ("commit") in the branch that your
   local workspace is on. _A_ `"head"` is that commit for any branch.
@@ -274,7 +281,7 @@ highly experienced.
 All Files
 --------------------------------------------------------------------------------
 
-You just edited some files, issued no git commands except maybe
+You just edited or deleted some files, issued no git commands except maybe
 `git checkout`, and now have regrets. Go back to your last commit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
@@ -290,8 +297,8 @@ git option and not doing anything extreme.
 
 Only One File
 --------------------------------------------------------------------------------
-You just edited one file, issued no git commands, and now have regrets. Go 
-back to your last commit:
+You just edited or deleted one file, issued no git commands, and now have regrets. Go 
+back to your last commited version of that file:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git checkout -- <filename>
@@ -302,15 +309,16 @@ git checkout -- <filename>
 
 Already Pushed
 --------------------------------------------------------------------------------
-Someone (maybe you) made changes and pushed them, and now you want the repo
-to go back to the way that it was before that happened:
+Someone (maybe you) made changes and committed and pushed them, and
+now you want the repo to go back to the way that it was before that
+happened:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 # Look at the log to find the commit hash
 git log 
 
 # Go back to the hash
-git revert <hash>
+git revert <hash> && git commit -am "reverted to <hash>" && git push
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The hash will be a long, hexadecimal number such as `cf80d8dbacc6fc90e3c86a5f1dac615bd9aab1ae`.
@@ -377,8 +385,6 @@ For more information, see https://github.blog/2020-01-17-bring-your-monorepo-dow
 (Equivalent to `svn checkout <repo> --depth files; svn update --set-depth infinity <dir1> <dir2> <...>`)
 
 
-
-
 Help! Detached HEAD
 =================================================================================
 
@@ -407,6 +413,60 @@ Get back to what you stashed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git stash pop
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Branches
+=================================================================================
+
+Create a branch and switch to it:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git checkout -b <newbranchname>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+List all branches:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git branch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Switch your workspace to another branch (including one that someone
+else created or `master`), losing any uncommitted changes:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git checkout <branchname>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Merge another branch _into the current one_ (which might be `master`):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git merge <sourcebranchname>
+
+# Fix conflicts manually...
+
+git commit -am "merge" && git push
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To submit a "pull request" for someone else to approve and merge
+from your branch to another (usually `master`) using the website: 
+
+1. On the website, click on "Pull Requests" 
+2. Select the green "New pull request" button.
+3. Select the source and destination branches
+
+
+Merge a pull request on the website: 
+
+1. Click on "Pull Requests"
+2. Select a request
+3. Follow the GUI options
+
+
+Delete a branch:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git push origin -d <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 <style>
