@@ -534,11 +534,16 @@ from git branches that I chose not to include analogous commands here.
 
 Create
 ---------------------------------------------------------------------------------
-Create a branch and switch to it:
+Create a branch, switch to it, and push the branch to the server:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git checkout -b <newbranchname>
+git push -u origin <newbranchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can only do this if you have no changes. So, plan ahead and make the branch 
+before you do the work. It is possible to make the branch retroactively, but
+tricky.
 
 
 Discover
