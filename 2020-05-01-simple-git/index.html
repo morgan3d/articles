@@ -10,19 +10,18 @@ the free hosting that comes with github.
 
 Here's my cheat sheet of common git commands. This idiomatic approach
 to git is useful for students and researchers working in small teams
-on rapid prototypes for short deadlines (and hobbyists working
-alone). What that translates to is a software engineering scenario
-where you want to maximize the speed of getting changes from one
-developer to another and minimize time spent with tools, because the
-total time lost if someone pushing a bug into the code is much lower
-than the cost of avoiding that problem.
-
-Use sweeping tool commands and then direct communication between
+on rapid prototypes and experiments under short deadlines (or hobbyists working
+alone). That is, a development scenario
+where you want to _maximize the speed_ of integrating changes between
+developers and minimize time spent with tools, because the
+cost of recovering from the rare accidentally-committed bug is much lower
+than the cost of avoiding that problem in the first place.
+In this case, it makes sense to favor sweeping tool commands and use direct communication between
 people instead of fine-grained tools process to avoid mistakes. This
-is in contrast to production development. In that case, code reviews,
+is in contrast to production development. In production, code reviews,
 automated tests, releases, continuous integration, and more complex
 versioning strategies are designed to _slow down_ code integration,
-because pushing a bug out can affect many people.
+because committing a bug can affect many people and be expensive to recover from.
 
 I'm assuming that you're using github or your institution's gitlab
 installation, so there's a website for creating and managing your
