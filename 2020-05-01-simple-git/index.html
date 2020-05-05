@@ -474,6 +474,35 @@ git checkout master
 
 (Really, only one is probably necessary, but you're in a bad way here)
 
+Untracked Files
+---------------------------------------------------------------------------------
+You pulled or cloned and git got confused along the way. Now you have tons of "untracked" files that git 
+itself just dumped into your workspace and it refuses to let you merge until _you_ clean up after it. You see
+something like this:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
+error: The following untracked working tree files would be overwritten by merge:
+     ...
+Please move or remove them before you merge.
+Aborting     
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Maybe there was a complicated LFS issue such as "smudge filter lfs failed", a process crashed 
+while writing to disk, or your network went out at the wrong time. You just want everything 
+to work again. My solution in this case is the big hammer: wipe it all out rather than 
+spending time on cleanup yourself.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+# Print the repo url
+git config --get remote.origin.url
+cd ..
+
+# Delete your workspace
+rm -rf <local dir>
+
+# Clone again
+git clone <repo url>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Static Web Hosting
 =================================================================================
