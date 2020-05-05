@@ -8,6 +8,22 @@ experienced with subversion and it worked well for you, but the new
 engineer/faculty/students/IT folks like git. Almost certainly you want
 the free hosting that comes with github.
 
+Here's my cheat sheet of common git commands. This idiomatic approach
+to git is useful for students and researchers working in small teams
+on rapid prototypes for short deadlines (and hobbyists working
+alone). What that translates to is a software engineering scenario
+where you want to maximize the speed of getting changes from one
+developer to another and minimize time spent with tools, because the
+total time lost if someone pushing a bug into the code is much lower
+than the cost of avoiding that problem.
+
+Use sweeping tool commands and then direct communication between
+people instead of fine-grained tools process to avoid mistakes. This
+is in contrast to production development. In that case, code reviews,
+automated tests, releases, continuous integration, and more complex
+versioning strategies are designed to _slow down_ code integration,
+because pushing a bug out can affect many people.
+
 I'm assuming that you're using github or your institution's gitlab
 installation, so there's a website for creating and managing your
 repositories. I'll call that "the website".
@@ -474,23 +490,29 @@ git checkout master
 
 (Really, only one is probably necessary, but you're in a bad way here)
 
-Untracked Files
+
+Untracked Files after Pull
 ---------------------------------------------------------------------------------
-You pulled or cloned and git got confused along the way. Now you have tons of "untracked" files that git 
-itself just dumped into your workspace and it refuses to let you merge until _you_ clean up after it. You see
-something like this:
+
+You pulled or cloned and git got confused along the way. Now you have
+tons of "untracked" files that git itself just dumped into your
+workspace and it refuses to let you merge until _you_ clean up after
+it. You see something like this:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
 error: The following untracked working tree files would be overwritten by merge:
      ...
 Please move or remove them before you merge.
-Aborting     
+Aborting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Maybe there was a complicated LFS issue such as "smudge filter lfs failed", a process crashed 
-while writing to disk, or your network went out at the wrong time. You just want everything 
-to work again. My solution in this case is the big hammer: wipe it all out rather than 
-spending time on cleanup yourself.
+These aren't files that you created. They just showed up during the
+pull.  Maybe there was a complicated LFS issue such as "smudge filter
+lfs failed", a process crashed while writing to disk, or your network
+went out at the wrong time. You just want everything to work again.
+
+My solution in this case is to bring out the big hammer: wipe it all
+out, rather than spend time on cleanup.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 # Print the repo url
