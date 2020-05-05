@@ -103,20 +103,20 @@ the essential differences of git for you are:
   for solo work or small teams, you can probably work directly in
   master. I usually do.
 
-- The "`HEAD`" is the latest revision ("commit") in the branch that your
-  local workspace is viewing. _A_ `"head"` is that revision for any branch.
+- The all-capitals "`HEAD`" is the latest revision ("commit") in the branch that your
+  local workspace is viewing. _A_ lower-case `"head"` is that revision for any branch.
   A `"detached HEAD"` means that you're looking at some older revision
-  in a branch (and should probably return to the latest revision before
-  doing new work there).
+  in a branch, and should probably return to the latest revision before
+  doing new work there.
 
 - github currently offers free hosting for unlimited numbers of _small_ (by my standards) public and private repositories.
   In each repository, the [current limits](https://help.github.com/en/github/managing-large-files/what-is-my-disk-quota) are:
   
-   - Practical 1 GB limit for the whole repository (including history and branches!)
+   - Practical 1 GB limit for the whole repository, including history and branches
    - Theoretical 75 GB limit
    - Definitive 100 GB limit
    - 100 MB per non-LFS file
-   - 1 GB total [LFS](https://help.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-git-large-file-storage) (across all repositories) and 1 GB monthly bandwidth for free
+   - 1 GB total [LFS](https://help.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-git-large-file-storage) across all repositories, and 1 GB monthly bandwidth for free
    - Additional LFS in increments of $5/month per 50 GB
 
 - gitlab is an alternative site with different pricing. It also allows and you to download their
@@ -174,7 +174,7 @@ git clone <repo>
 
 where `<repo>` is a URL that ends with `.git`. You can find it on your
 git website from the green "Clone or download" button on the right
-side of the page. If using your institution's gitlab (vs. github), you may find that the
+side of the page. If using your institution's gitlab, you may find that the
 "SSH" variant fails silently if they have not configured it properly--I stick with
 the `https` versions of the git URLs.
 
@@ -662,6 +662,7 @@ git push --delete origin <branchname>
 
 _Thanks to Zander Majercik for checking my git commands and debating the safest idioms._
 
+<style class="fallback">body{visibility:hidden}</style>
 <style>
 body, .md a { font-family: Arial }
 .md pre.tilde {font-size: 110%; background: #F8F8F0}
