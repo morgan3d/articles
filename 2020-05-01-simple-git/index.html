@@ -132,12 +132,15 @@ Install
 
 Once per machine, you need to install git and LFS (Large File Storage).
 
-macOS
+macOS ("OS X")
 ---------------------------------------------------------------------------------
 
 1. Use the version of git that comes with Xcode, or install via GUI pkg from https://sourceforge.net/projects/git-osx-installer/
-2. Install LFS from https://git-lfs.github.com/
-3. Run `git lfs install` (yes, this is different from step #2)
+2. Download LFS from https://git-lfs.github.com/
+3. Double-click to unzip the LFS package and run `sudo ./install.sh` from it
+4. Run `git lfs install` (yes, this is different from step #3)
+5. Optionally run `git config --global credential.helper osxkeychain` for password caching
+
 
 Windows
 ---------------------------------------------------------------------------------
@@ -153,6 +156,9 @@ Ubuntu or Debian
 sudo apt-get install git 
 sudo apt-get install git-lfs
 git lfs install
+
+# Optional, for password caching
+git config --global credential.helper cache
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
