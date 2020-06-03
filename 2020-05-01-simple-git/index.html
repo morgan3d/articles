@@ -584,9 +584,31 @@ Branches
 I'm describing what git calls "remote" branches, which are what you want if you're
 only using one kind. There are also "local branches" and "local nontracking branches".
 
-Subversion branches are lazy-copied entire directories and such a different concept
-from git branches that I chose not to include analogous commands here.
+Subversion branches are lazy-copied entire directories. That's such a different concept
+from git branches that I chose not to include any SVN analogous commands here.
 
+Git branches are fairly easy to use for simple cases. For many of my changes, I still just 
+work directly on master on research and prototyping projects because "fairly easy" isn't the same as "zero cost tooling".
+But when I'm making a "build breaking" change such as a refactor or there are a large number of collaborators, I start using
+branches in lightweight way. Once a branch is created, my typical workflow is:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+# Go to my branch
+git checkout <mybranch>
+
+# ... make changes
+
+# Commit
+git commit -am "<message>" && git push
+# ... repeat until reaching a good stopping point
+
+# Bring in the latest changes from master to my branch
+git merge master && git push
+
+# Move my changes to master
+git checkout master
+git merge <mybranch> && git push
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create
 ---------------------------------------------------------------------------------
@@ -624,7 +646,7 @@ else created or `master`), losing any uncommitted changes:
 git checkout <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Returning to the master branch with `git checkout master`.
+Return to the master branch with `git checkout master`.
 
 Merge (Manual CLI)
 ---------------------------------------------------------------------------------
