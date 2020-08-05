@@ -1,0 +1,1065 @@
+                 <meta charset="utf-8">
+                   **Beyond Control**
+                  *Game Design Document*
+                      Morgan McGuire
+
+**Setting**: Broken-down mechs in a world reclaimed by nature
+
+**Pitch**: RoboRally meets Dominion
+
+**Goal**: Race and battle
+
+**Mechanics**: Real-time, turn-based programming: moving is a puzzle and every second is a potential turn
+
+**Influences**:
+- "Out of Control" GMTK2020 jam prompt
+- _RoboRally_ movement and broken registers
+- _Dominion_/_Magic_ tactical choices
+- _Into the Breach_ / _Crysis_ / _The Last of Us_ aesthetics
+
+
+Reward Cycles
+==================================================================
+
+From smallest to largest:
+
+1. Solve the puzzle of combining six operations to move the robot a small distance (~30 sec cycle)
+2. Strategically traverse the map, using features to accelerate and shield the robot (~1 min)
+3. Complete quest objectives or race and battle challenges per map (~3 min)
+4. High score streaks and quest progress, raising difficulty to access more complex instructions (~15 min)
+
+
+Mechanics
+==================================================================
+
+Each player has an `instruction_queue` of instructions to execute.
+All instructions take "1 turn" = `INSTRUCTION_FRAMES`. The player
+also tracks the `future_hex_angle` that it will be at after the
+queue has completed. This is used to compile absolute ACTIONs into
+relative rotation INSTRUCTIONs, where the ACTIONs can be compiled at
+any point.
+
+All UI only ever requires horizontal input and a single button, including
+menus.
+
+
+Turn Based
+------------------------------------------------------------------
+
+Although it feels slow real-time, the game is entirely turn based.
+This keeps the mechanics simple and makes it fair.
+The real-time feel comes from several key design decisions:
+
+1. Players can put more instructions into their queue at any time
+2. Entities that can't interfere with each other can take turns
+   simultaneously,
+3. Rotation instructions are the most common and are uninterruptible
+4. Thinking about a move and using the UI take about the amount of
+   time between turns.
+
+The hex-based movement and "real-time" turn-based gameplay are elements
+that I definitely want to re-use in future games. They're a great
+way to bring board game ideas into an arcade video game.
+
+Target duration is 10s-1min from launch to actual gameplay, 4 minutes
+of play for a race game, and 6 minutes of play for a battle game.
+
+
+Actions
+------------------------------------------------------------------
+
+Action      | Compiles To
+------------|--------------------
+Movement    | `ROT` and `MOV`
+0x, -1x, 2x | Changes the number of `MOV` instructions
+Spin arrow  | Changes the number of `ROT` instructions
+Forward arrow | `MOV` in the current direction
+Burn        | `SPRAY`
+Freeze      | `SPRAY`
+
+
+Instructions
+------------------------------------------------------------------
+
+Instruction    | `op`    |  Parameters     | Notes
+---------------|---------|-----------------|---------------------------------------------
+Rotate         | `ROT`   |  `sign : +/- 1` | 
+Translate      | `MOV`   |  `sign : +/- 1` | Assumes current direction, plays motor sound. Blockable
+Conveyor       | `CON`   |  _none_         | No motor sound. Blockable
+Spray          | `SPRAY` |  `type`: `action_sprite.burn` or `freeze`       |
+
+
+Difficulty Levels
+------------------------------------------------------------------
+
+Level| First turn      | Reduced duplicates? | Modifiers    | Instructions                                   | Evt. Penalty | Evt. Recovery | Score Handicap
+-----|-----------------|---------------------|--------------|------------------------------------------------|--------------|---------------|---------
+0    | Away from spawn | Yes                 | 2 (0x & -1x) | Cardinals, 0x, -1x, 2x                         | 1 reg        |  10%          | +200%
+1    | *Cardinals*     | Yes                 | *2 random*   | Cardinals, 0x, -1x, 2x                         | *2 reg*      |  10%          | +150%
+2    | Cardinals       | Yes                 | *1-3 random* | Cardinals, 0x, -1x, 2x                         | 2 reg        |  10%          | +100%
+3    | Cardinals       | *No*                | *0-3* random | Cardinals, 0x, -1x, 2x, *forward*              | 2 reg        |  *5%*         | +50%
+4    | Cardinals       | No                  | 0-3 random   | Cardinals, 0x, -1x, 2x, forward, *rotate mods* | 2 reg        |  5%           | +0%
+
+The specific registers affected by environmental damage are
+predictable so that players can plan around them. Water damages
+the two (or 1 for level 0) central registers. Fire damages the
+leftmost two (or 1 for level 0) registers.
+
+
+
+Coordinate System
+==================================================================
+
+"Pointy-up" hexes with directions northeast, east, southeast, southwest,
+west, and northwest. 32x32 tiles, where due to shifting each offset row
+is 24 pixels above its predecessor. Cheat the perspective to use 2:1 slopes
+on the diagonals of the hex. Borders abut unstead of overlapping. Allows
+exactly fitting the 384x224 screen and easy coordinate transformations, compatible
+with Tiled TMX maps as well.
+
+Most of the game runs in hex coordinates using the axial method and 
+`xy()` representation. 
+
+The world-space pixel `(0, 0)` is at the lower-left of the screen,
+which corresponds to the center of a hex in the last row of the map.
+
+
+Change Log
+==================================================================
+
+Each session is 90-120 min of programming or art. Time spent
+thinking about the design and documenting it between sessions is
+not recorded.
+
+
+S1: Original design
+------------------------------------------------------------------
+
+**Working Title**: "Slowbots"
+
+**Setting**: Robot factory floor battle arena.
+
+**Pitch**: Roborally meets Gloomhaven.
+
+**Goal**: Be the last robot standing.
+
+**Mechanic**: Real-time turn based programming: every 1s is a potential turn.
+
+You have a hand of two cards, each with one symbol on the
+top and one symbol the bottom (like Gloomhaven). 
+Symbols are move, rotate left, rotate right, shoot, push
+button, etc.
+
+Your actions:
+
+1. Queue the top symbols from both cards for your robot to execute, and then draw two new ones
+2. Queue the bottom symbols from both cards for your robot to execute, and then draw two new ones
+3. Swap the order of the two cards
+ 
+When you've played your deck, they reshuffle.
+
+You can pick up new cards in the arena (like Dominion, use this for deck control).
+
+There are bridges, pits, conveyor belts, lasers, etc. on the factory floor.
+
+(At least, I think that Gloomhaven has the cards with two actions mechanic.)
+
+![Original monochrome, diagonal action icons](screenshots/diag_card.png)
+
+
+S2: Simplify
+------------------------------------------------------------------
+
+New design: "[RoboRally](https://boardgamegeek.com/boardgame/18/roborally) meets puzzle swapping".
+
+- There are top and bottom streams of actions, represented by icons.
+
+- The player chooses either the top or bottom element for each pair,
+  and then executes it. Execution always happens on a regular, slow clock.
+
+- If the player stalls too long, then the robot "reboots" and both
+  streams completely reset. This is to prevent a player from 
+
+The icons for actions rotate to match the alignment that they will be
+in if this stream is chosen. They are also colored to provide some
+consistency while they're rotating and help make them readable.
+
+I've implemented the UI for this, including the relative rotation of upcoming
+actions in the stream.
+
+The advantage of a design that uses *rotate actions* is that they make the
+move actions frequently useful (e.g., if you're trying to go to the left,
+then you can usually avoid being forced to ever choose to turn 180 from your
+desired path, although you might wiggle a lot). The disadvantage is that they make all
+following actions relative. That requires extra animation and is a lot harder for
+the player to think about than absolute directions. I suspect that I'll end up
+using absolute directions to simplify further.
+
+![Smaller, color-coded icons](screenshots/card_icon_17x17.png class="pixel") ![Even smaller icons for more UI space](screenshots/card_icon_11x11.png  class="pixel") ![Action stream UI](screenshots/Slowbots_2020-07-13_07h39.png class="pixel")
+
+
+S3: Simplify More
+------------------------------------------------------------------
+
+I've switched to absolute directions now to
+simplify the implementation and UI by removing all of the
+icon rotation.
+
+I initially made square grid absolute movements, but then realized
+that a hexgrid helps reduce the "most absolute directions are not the way I want to go"
+problem. (I'm always eager for an excuse to use a hex grid, because it looks cool.)
+
+With four cardinal directions, 25% of the directions have a dot product that is
+positive with a desired direction. With _six_ cardinal directions, 50% of the directions
+have a positive dot product. This doubles the chance that the player can move in a direction
+that they want to (roughly). Because players will always have the choice of _two_ directions,
+this increases the chance of moving in a desired 
+direction from (100% - 75%^2) = 43% with a square grid
+to (100% - 50%^2) = 75% with a hex grid.
+
+In switching to hex icons, I removed the borders (which got large and ugly as hexagons)
+and changed to colored icons with black borders. This gives a distinctive silhouette and color
+to each icon, as well as making them smaller, so it has several graphical advantages.
+
+![Square action icons](screenshots/square-action-11x11.png class="pixel" width=200%) ![Hex action icons](screenshots/action-8x8.png class="pixel" width=200% style="background:#CCC") ![Pointy hex action icons](screenshots/pointy-hex-action-8x8.png class="pixel" width=200% style="background:#CCC")
+
+At 32x32 with 2:1 slopes on the diagonals, point-up hexagons look better to me than
+point-sideways ones (with 1:1 slopes on the diagonals, point-sideways looks better).
+So, I'm rotating my icons 90 degrees.
+
+
+For the actual game tiles, there are two ways to draw hex tile as
+pixel art. If the borders will fit together and _overlap_ outlines,
+then 3-pixel points at 31x32 pixels make the right shape. If the tiles
+will be adjacent without overlap, then 32x32 tiles with 2-pixel points
+(where each offset row is 24 pixels high) are the right shape. This
+works particularly well when the borders are either shaded or there are
+no borders, and provides an integer tiling of the quadplay screen.
+
+![31x32 with 3-pixel points vs. 32x32 with 2-pixel points](screenshots/Slowbots_2020-07-13_07h39-hex-types.png class="pixel" width=200% style="background:#ccc") ![32x32 with shading](screenshots/Slowbots_2020-07-13_07h39-shaded.png class="pixel" width=200%)
+
+S4: Graphics
+------------------------------------------------------------------
+
+I drew two robots and some hexagons, and wired up the basics of
+a static graphics display. Tiled can handle hexagonal maps with a little
+bit of tweaking, and while quadplay can't run the optimized map rendering
+with them, it can still handle this simple scene in 1.8ms (on a MacBook Pro),
+so I think I can get away with the explicit map rendering.
+
+![Some robots, a map, and UI](screenshots/Slowbots_2020-07-13_20h24.png)
+
+Nothing here is live. The next big step will be figuring out how to animate
+both the UI and the robots in an elegant way. I don't want to maintain a lot
+of state just for animations, so would like to figure out a general mechanism
+for making objects transition "on the beat" of the global clock.
+
+S5: Turn Order
+------------------------------------------------------------------
+
+In _RoboRally_, turns for players are taken in order of distance
+from a central spot, and then all board elements activate. 
+
+I want the
+game to feel almost like a rhythm game, with player turns happening at
+a slow, steady cadence. So, I can't change the turn order between turns.
+But I want board activations (especially conveyor belts) to feel consistent.
+I can't simply run them _between_ players or they'd happen twice before players
+have a chance to interact again (in 2 player mode), and if they run after
+a specific player, then they would be biased in the turn order.
+
+A solution for 2-player is to
+say that the turn order is always:
+
+1. P1
+2. P1
+3. Board
+4. P2
+5. P2
+6. Board
+
+This brings back the earlier notion of planning ahead a bit and using a "hand".
+
+This could be extended to higher numbers of operations and players, but
+the board is not very large and the strings of actions would get long and less casual.
+
+I'll show the player two pairs of operations. They select each to 
+fill registers by the end of the selection time, and then these execute
+and the next three come.
+
+I also shifted the board by 1/2 a hex so that the minimal space is spent on boundary
+hexes. For 32x32 hexes, I can fit 12x9 hexes fully on screen
+at 384x224, with a visible boundary around them.
+
+ 
+S6: Hex Math
+------------------------------------------------------------------
+
+I implemented the coordinate system mappings between pixels, hexes,
+and map offset coords; as well as between screen/world-space angles
+and hex-space angles; hex-snapping; and the hex-angle to hex-direction function.
+
+Robots can now be specified with a `hex_pos` and `hex_angle` and
+the world-space values are computed from them every frame. This allows
+the mechanics and animation space to be all hex and the world-space
+coordinates used for rendering only.
+
+I used https://www.redblobgames.com/grids/hexagons/ as a resource but
+still had to do a lot of adjustment for my axes and pixel scaling.
+
+![Test of hex-space animation transformed to world space](screenshots/Slowbots_2020-07-14_18h51.gif)
+
+Currently at 76 statements, 0 sounds, 42k pixels
+
+#### Theme Thoughts
+I adopted a RoboRally theme to get started, but if the gameplay turns out
+to be fun I think I want to move away from the industrial setting and combat goal.
+I'm thinking about a pretty, nature-returns ruined city (ala _Last of Us_, _12 Monkeys_, _Crysis_).
+
+The players are coop, slow real-time programming (slow-gramming!) mechs that have wonky broken controls 
+because they are old. The goal is to gather specific resources, rescue people, or solve problems
+in each scene vignette. You come in on a train, run around a scene doing stuff,
+and then get back on the train and ride it to the next scene. Also sort of Into The Breach feeling
+in terms of small, pretty areas with diverse tasks, and being upbeat despite the depressing setting.
+
+#### Turns
+
+I considered a lot of different ways of handling turn taking. The challenges are:
+
+- I want feeding a sequence of instructions to feel fairly smooth, splitting the difference 
+  between real-time control and explicit turns with waiting. I don't want players to think too 
+  far ahead and make the game too hardcore in a strategic direction. I don't want them to
+  move too quickly and have it degenerate into an arcade game with frustrating controls.
+- Co-op gives more freedom for pacing, as I can balance the game "unfairly" in the players'
+  favor. It doesn't matter if the time between turns changes with the number of players or
+  the board as much because there's no competitive feel to throw off. It also doesn't matter
+  who goes first.
+- Simultaneous motion would be ideal, but it creates lots of problems. What if one player
+  collides with another? Should players be able to move one immediately behind each other,
+  because there will be no collision if they move simultaneously? How does the board moving
+  players affect players moving themselves if it all happens at the same time? What if the
+  constraints form a cycle, such as players driving in a circle? Do I have to build a whole
+  constraint managements system just to lower latency between input and motion?
+- I tested adjusting player rotation and translation speeds so that all animations would fit
+  within a single turn. It felt bad. It was like the character sped up or slowed down for no
+  reason.
+- I want the time between a player's turns to be the same within a level, so that they can
+  get into a kind of rhythm. If NPCs and the board "take turns", then that will change
+  between levels. Do I have to reserve time for the board or NPCs each turn even when they 
+  are doing nothing?
+
+After thinking through a lot of alternatives, I decided to try the following, dead-simple solution
+first:
+
+- Player ACTIONS turn into one or more INSTRUCTIONS in a queue not visible to the player
+- Rotating 60 degrees is a single INSTRUCTION. Moving one hex is a single instruction
+- Everything takes turns. The order is randomized once per level. Players shouldn't feel
+  an "order" (and may not even notice the cycle), because they can provide input at any time
+  and it will queue for their next turn
+- The board can't move players in normal circumstances, so it won't get a turn. Occasional
+  exceptional activities, such as a bridge collapsing, will happen on a character's turn
+  if triggered by that character and be injected between turns if they happen automatically
+
+![Variable velocity to cover rotation time](screenshots/Slowbots_2020-07-15_22h41-adjusting-animation-to-constant-turns.gif) ![60 degrees rotate = 1 hex translate time](screenshots/Slowbots_2020-07-15_22h44-rotation-as-instruction.gif)
+
+The above simulation shows that the velocity appears variable on the left
+and constant on the right. I like the right better, which matches the new plan.
+The only undesirable aspects are that the time between moves may be inconsistent across
+levels and that depending on turn order, `A` can drive right behind `B` but `B` must be 2 hexes behind `A`.
+
+I implemented the compilation of actions into instructions that run once per player
+turn. There is still no checking of whether the actions are legal, and very little graphical
+feedback of what is going on with the queues.
+
+Now at 103 statements, 0 sounds, 42k pixels.
+
+
+S7: Instructions
+------------------------------------------------------------------
+
+[x] Draw new nature-theme tiles
+   [x] Water
+   [x] Grass in concrete
+   [x] Grass
+   [x] Dirt
+[x] "Compiling" actions to instructions
+[x] Detect collisions with the map
+[x] Playtest two player turn taking for feel
+[x] Increase icons from 8x8 to 11x10 for better readability
+
+Two players taking turns is ok. More players may feel stunted, like
+there is too long of a wait between moves. Right now the main problem
+is that there is too little strategy. I basically just choose whichever
+direction isn't opposite my goal, hoping to eventually wander over there.
+Instead there should be more strategy in the movement itself;
+if there's an obvious algorithm for the "optimal" move it isn't interesting.
+
+Some ideas:
+
+- Given a sequence of _n_ moves, play _n_ - 1 of them in whatever
+  order is desired. This forces thinking a bit ahead in order to avoid
+  obstacles and burn undesired moves.
+- Add more instructions that interact. For example a "2X" multiplier that 
+  applies to the following instruction.
+- Choose between *pairs* of moves instead of individual moves. I'm worried
+  that this still has a dominated strategy (choose the least bad pair) that
+  forces fully considering two short sequences.
+- Play some completely different minigame to "construct" moves.
+  Imagine playing Tetris where different combinations of shapes formed
+  different directions.
+
+Now at 108 statements, 0 sounds, 53k pixels.
+
+![Old, small icons](screenshots/action-8x8.png class="pixel" width=200%) ![New, larger icons](screenshots/action-11x10.png class="pixel" width=200%)
+
+![New nature graphics](screenshots/Slowbots_2020-07-17_10h19.png class="pixel" style="border:1px solid")
+
+S8: Hand
+------------------------------------------------------------------
+
+Implemented a "hand" of cards, where the player chooses the order
+to execute them before being dealt a new hand. This leads to Dominion-like
+play, where there's something to think about. The RoboRally-style bookkeeping
+should be reduced by taking the actions immediately.
+
+[x] New `player.action_array` data structure for the hand
+[x] Draw hand
+[x] Track horizontal position along the hand
+[x] Implement executing actions
+[x] Refill the hand when empty
+[x] *Always* give a 0X modifier
+
+![New user interface and mechanic](screenshots/Slowbots_2020-07-17_11h58.png class="pixel" style="border:1px solid")
+
+Game size is 123 statements, 0 sounds, 53k pixels.
+
+
+S9: Modifiers
+------------------------------------------------------------------
+
+[x] Make modifiers not count towards resetting the hand
+[x] Draw active modifiers shifted up and yellow in the UI
+[x] Implement modifier selection
+  [x] Change the `player.available_array` --> `player.status_array`
+  [x] Values are `"on"`, `"off"`, and `"used"` for modifiers and `"available"` and `"used"` for other actions
+  [x] Allow modifiers to be selected and unselected
+[x] Apply the modifiers to action compilation
+[x] Wipe the active modifers after an action
+[x] Add 4-player
+[x] Visually connect each player character to their UI
+[x] Implement horizontal shifting of the UI to always 
+    remain visible
+[x] Shift UI to remain visible when other players are nearby
+[x] Add optional UI on screen edges
+
+![Adaptive UI layout](screenshots/Slowbots_2020-07-18_12h18.gif style="border: 1px solid") ![UI on the edge of the screen](screenshots/Slowbots_2020-07-18_12h29.gif style="border: 1px solid")
+
+Game size is 184 statements, 0 sounds, 63k pixels
+
+
+S10: 2P playtest
+------------------------------------------------------------------
+
+[x] Prevent robots from hitting each other
+[x] Generalize actions to entities from players
+[x] Playtest moving in multiplayer with both UI setups
+
+Playtest feedback: 
+
+- Players confused about modifiers and actions
+- Colors don't match other quadplay player colors
+- Turn taking is annoying when everyone is moving
+- On robot UI is generally byt not universally preferred
+
+Playtest followup:
+
+[x] Make the first turn have no modifiers so that they learn how to
+    move without constraints or modifiers
+[x] Make the colors match the unofficial/implicit quadplay color order:
+    pink -> blue -> yellow -> green 
+[x] Per-player choice of UI on robot or at the bottom
+[x] Help text on first turn
+[x] Start robots from the initial position on the right (this will be the train)
+[x] Make a visual indicator that instructions are still pending
+[x] Allow all entitys that can't interfere with each other to move simultaneously
+
+Now at 218 statements, 0 sounds, 102k pixels
+
+
+S11: Conveyor Belts
+------------------------------------------------------------------
+
+Now my goal is to ensure that basic movement is engaging for everyone.
+If moving the characters around is achievable without frustratio but
+still challenging enough to be interesting, then I can add puzzles as
+the next larger reward cycle and it will enhance the game.
+
+Further playtest feedback:
+
+- Just competitive racing is fun (or would be with handicaps)
+- First turn instructions are too abbreviated to understand
+- Playtesters want a colored border or colorwheel to help make the
+  color mapping clearer (even though it is redundant with the arrows)
+
+[x] Make a race map
+[x] Draw a goal hex
+[x] Reduce color on conveyor belts
+[x] Implement conveyor belts:
+   [x] At the start of a player's turn on a conveyor belt:
+       - `if not (player.instruction_queue[0] default {}).is_conveyor and not (player.instruction_queue[1] default {}).is_conveyor`, insert a conveyor instruction after instruction 0 (or at 0 if there is no other instruction)
+   [x] Draw animations
+   [x] Add animation support to map drawing
+
+![Working conveyor belts](screenshots/Slowbots_2020-07-18_22h37.gif style="border:1px solid")
+
+Game size is now 242 statements, 0 sounds, 147k pixels.
+
+Runtime cost is low (MacBook Pro): Framerate 60Hz (1×); **4.2ms Total** = 1.8ms CPU + 0.0ms Phys + 2.4ms GPU
+
+S12: Handicaps
+------------------------------------------------------------------
+
+Add handicaps:
+
+[x] Allow different per-player handicaps
+   [x] Level 1: Guaranteed -1x and a 0x every round
+   [x] Level 2: Guaranteed two modifiers and four directions, no repeats on directions
+   [x] Level 3: Current algorithm. Guarantee at least 3 directions and at least one modifier.
+[x] Title screen
+
+I've been playtesting up to three players (I don't have four available right now)
+in race mode and the game seems viable. I've flushed and fixed a few bugs but there are
+no major complaints any more about the UI or controls...mostly the players
+want handicaps (just added) and new maps.
+
+I changed from the working title of "Slowbots" to "Out of Control" as
+a real title.
+
+Game size is now 294 statements, 0 sounds, 310k pixels
+
+
+S14: UI Cleanup
+------------------------------------------------------------------
+
+I changed the name to "Beyond Control". I think "Beyond" is stronger and
+more unique than "Out of" and better evokes exploration and a (pretty)
+post-apocalyptic world.
+
+[x] Implement shorting out in water by taking away slots
+[x] Colored border on main screen
+[x] Make robot appear underwater
+[x] Make water only short one spot at lowest difficulty
+[x] Make game selection screen:
+   - Race
+   - Battle
+   - Quest
+[x] Persist difficulty levels
+[x] End game detection and menu
+
+Playtest feedback:
+
+- Water makes sense and is fun
+- Difficulty levels work
+- Advanced players want more modifiers. Ideas:
+  - "Forward" arrow that goes whatever direction you're facing at the time it executes. Maybe make the icon
+    itself rotate based on the `final_hex_angle` so that it is a little easier to use
+  - "Turn" modifiers that rotate the direction of regular arrows
+
+![Game over menu](screenshots/Beyond_Control_2020-07-20_00h11.gif)
+
+![Game structure](screenshots/Slowbots_2020-07-20-modes.png)
+
+Game size is now 429 statements, 1 sounds, 561k pixels.
+
+
+S14: Race Maps
+------------------------------------------------------------------
+
+[x] Multiple maps
+    [x] Make four race maps total
+    [x] Implement minimap rendering
+    [x] Implement race map selection UI
+[x] Shuffle spawns
+[x] Redraw title screen for better theming
+[x] Redraw tiles for stronger visual contrast and clearer conveyor motion
+
+![Title and map selection](screenshots/Beyond_Control_2020-07-21_23h06.png) ![Indoor map](screenshots/Beyond_Control_2020-07-21_23h07.png) ![Outdoor map](screenshots/Beyond_Control_2020-07-21_23h08.png)
+
+Game size is 450 statements, 1 sounds, 735k pixels.
+
+
+S15: New Race Maps
+------------------------------------------------------------------
+
+[x] Arbitrary spawn locations in race mode
+  [x] Update the lowest difficulty to start with directions
+      towards the center of the screen (i.e., away from the
+      initial spawn)
+[x] Map scrolling for more than 4 maps
+[x] Draw overgrown wall hexes
+
+The current set of race maps:
+
+![](screenshots/2020-07-22-a.png) ![](screenshots/2020-07-22-b.png) ![](screenshots/2020-07-22-c.png)
+![](screenshots/2020-07-22-d.png) ![](screenshots/2020-07-22-e.png)
+
+Game size is now 470 statements, 1 sounds, 809k pixels.
+
+
+S16: Polish and Bug Fixing
+------------------------------------------------------------------
+
+[x] Per-player sounds
+  [x] Robot movement
+  [x] UI change 
+  [x] UI accept
+  [ ] UI cancel
+[x] Title music
+[x] Make the `CompetitiveWin` menu use a cursor just like the other menus
+[x] Make level 2 difficulty (appears as 3 in the game) slightly harder
+    by only guaranteeing one instead of two modifiers
+[x] Make level 3 difficulty slightly harder by lowering the environmental
+    recovery rate
+
+I expected to playtest for the new map layouts. But
+the playtest flushed a number of bugs that only occur in
+multiplayer or after completing and then restarting a map.
+
+The "Rematch" option currently causes the previous player to
+immediately win on the same map (or maybe any map with the
+flag in the same position?)
+
+On loading a new map, the conveyor belts and blockers do not work
+consistently.
+
+...the bug turned out to be not clearing the `entity_array` on game
+start. The `entity_array` has the contents of the `player_array` as well
+as any NPCs (which don't yet exist), and I forgot to erase it.
+
+More playtest results:
+- New bug with conveyor belts, where sometimes players
+  who move on them can get into a state where the conveyor never tries
+  to move them again.
+- Placeholder UI sounds aren't too annoying, although they should be upgraded
+- New graphics are an improvement
+- Higher difficulty levels need to be even harder
+- A player found a new strategy of intentionally driving into water to short out
+  registers with bad instructions. (I hadn't anticipated this, but want to encourage
+  it! I'll make another kind of short that kills other instructions.)
+- Need more, harder maps with more interaction opportunities
+- Easy difficulty levels are great...they really are a huge advantage and are relatively
+  fast
+
+
+S17: Fire
+------------------------------------------------------------------
+
+[x] Draw an animated fire hex
+[x] Refactor "wet" code to handle both hot and wet as a generic 
+    environment damage routine. Rename the fields consistently on
+    `player`, `ASSETS`, etc. so that "hot" and "wet" can be used everywhere
+    instead of "fire", "water", "wetness", etc.
+[x] Make a fire "short" that fries the *first* two
+    instructions, as the inverse of the wetness short
+[x] Make wetness instantly remove heat
+[x] Make fire animation for robot
+[x] Make fire instantly remove wetness
+[x] Make fire sound
+
+
+S18: Conveyor Bugfixing
+------------------------------------------------------------------
+
+The forward instruction proved remarkably simple to implement.
+To draw it in the UI, I just substitute a rotated sprite where I round
+the `future_hex_angle` to the nearest 45 degrees. That automatically snaps
+60 degrees to 45 degrees. To compile it, I just issue a `MOV` instruction
+on the robot, which is already a relative motion--the absolute motion
+is produced by extra `ROT` instructions, which I just ignore in this case.
+
+I'm looking for the conveyor belt bug. It seems that in some situations the
+conveyor affects the robot one turn after it has moved on, and in
+other situations it ignores the robot altogether.
+
+...
+
+The delayed conveyor belt bug was caused by having a 2-hex direction
+specified for the southwest direction instead of a 1-hex value.
+I haven't been able to reproduce the other conveyor bug. I debugged this
+by printing all of the state in the conveyor belt logic right when it 
+executes.
+
+[x] Add rainbow "forward" arrow at highest and second highest difficulty
+[x] Animate forward arrow rotation to make more obvious that it is changing
+[x] Fix conveyor belt bug
+[x] Make the title screen spark and pulse on the beat
+
+
+S19: Max Difficulty
+------------------------------------------------------------------
+
+I've been tweaking graphics and fixing bugs primarily during
+this session, but added a few features that were long planned and
+only needed a few lines of code each.
+
+[x] Make an intro for the race map to help players know which robot is theirs
+[x] Add rotation direction modifiers at highest difficulty
+[x] Show titles & descriptions of maps on selection screen
+
+![New menus and transitions](screenshots/Beyond_Control_2020-07-24_03h05.gif)
+
+Game size is now 576 statements, 10 sounds, 367k pixels.
+Previous pixel counts were incorrect due to a double-counting bug
+in the resource stats that is now fixed.
+
+
+S20: Battle Design
+------------------------------------------------------------------
+
+Design ideas for Battle and Quest games:
+
+- Flame thrower and LN2 spray
+- Add new *modifiers* (not instructions)
+  - Allows them to be held
+  - Forces movement to continue attacking
+  - Need to randomize the difficulty 0 modifier when armed
+- Flame thrower turns ice to water and trees to fire
+- LN2 turns water to ice and fire to dirt
+- Holding still for too long will glitch robot, randomizing the hand...prevent battle standoffs and spawn camping or getting stuck in quest mode
+- Water protects from flame thrower
+- 2-4 hex range
+- Both weapons insta-kill other robots
+ 
+
+[x] Implement pits
+  [x] `player.enabled` state that can be used to temporarily
+      hide a player and prevent UI
+  [x] Store spawn location at map start
+  [x] Color spawn locations using `draw_poly(..., player.color)` so that
+      players will know where they're going to teleport back to
+  [x] Animate falling down the pit with `sequence()`
+  [x] Sound effect
+[x] Draw additional broken and overgrown pavement tiles
+
+Game size is now 614 statements, 11 sounds, 394k pixels.
+
+I note that the game has increased about 3x in "size" since
+it was first playable, which means that 2/3 of the assets and
+code are polish rather than core mechanics.
+
+
+S21: Sprint
+------------------------------------------------------------------
+
+I'm now trying to wrap up the game in a complete state in order to
+consider it done. I'm hitting the end of the virtual 3-day
+jam timeframe (20 sessions x 90-120 min = 30-40 hours of development),
+and GMTK 2020 would have given me about that much development time
+had I been in a position to do it all at once instead of a short period
+each day due to my schedule this year.
+
+The biggest concession to time is that I've cut Quest mode, although I
+hope to return to it in the future for polish. I'd very much like to redo
+most of the in-game art or connect with a real pixel artist for that, which
+would be another good post-completion polish pass.
+
+![Current action icons](screenshots/2020-07-26-action.png class="pixel" width=200%)
+
+![Current hex tiles (lots of reserved space at the bottom)](screenshots/2020-07-26-hex.png class="pixel")
+
+New in this session:
+
+[x] Move modifiers to the _front_ registers in restocking to make it 
+    more intuitive that flame thrower and LN2 will go first
+   [x] Make fire lock the _rear_ registers
+[x] Draw abandoned car hex
+[x] Draw building ruin hex
+[x] Hide quest mode in the menu
+[x] Fix "Battle" not appearing in the game select menu
+    (I was confusing `continue` and `break` in a loop)
+[x] Draw ice tiles with animation
+[x] Visuals for burn and freeze
+[x] Make `SPRAY_RANGE` constant
+[x] Make interference detection account for spraying: 
+    within `SPRAY_RANGE` for movement and spraying, and within `2 SPRAY_RANGE` for both spraying
+
+
+![SPRAY instruction](screenshots/Beyond_Control_2020-07-27_00h22.gif)
+
+Game size is now 641 statements, 11 sounds, 396k pixels.
+
+
+S22: Battle Testing
+------------------------------------------------------------------
+
+Battle mode was a little too hard. I found myself trying to waste all of the
+actions to get another attack modifier. I increased the chance of an attack
+modifier to 100%, but it still wasn't enough (especially because there are TWO
+types, and sometimes you get one that you can't use in that situation). 
+
+This still wasn't enough. So, I made the attack modifiers replace a move action
+instead of a modifier. This increases the chance of being able to do something
+useful because eliminating moves decreases the time until a new set of moves is
+available. I also increased the width and length of the cone (by accident, although
+it seems like a good idea if weapons are underpowered).
+
+I'm now switching the weapon to the _last_ slot instead of the first
+and making it fire after the move instead of before. This resolves
+the issue of whether you can use attacks in water: you can't, because you lose
+that slot.
+
+If this is still too hard, then I might have to either extend the hand size
+or have weapon modifiers restock themselves rather than waiting for a new set
+of actions.
+
+...
+
+After playtesting, it is still too hard to use weapons and move in battle mode.
+In response, I gave all players the low-difficulty set of starting moves (which are
+towards the center of the board) in battle mode and made the weapon modifier
+automatically restock every 32 turns even if the actions aren't all used.
+This is about once every 8 seconds. I suspect that I'm going to have to increase
+the hand limit to 7 in battle mode, but I'm going to playtest more first
+because that requires touching a lot of code.
+
+Bugs:
+
+[x] Fix: Players can currently execute an already-used action
+    and waste a modifier on it. This was caused by allowing used
+    actions to fall through the button press instead of stopping it.
+[x] Fix: Rotation modifiers sometimes get stuck on, even once consumed.
+    This was caused by forward arrows, not rotation modifiers--they were
+    not updating the `future_hex_angle` because they were compiled 
+    separately.
+[x] Fix: Environment sounds playing twice. They were triggered by the `end_map_sprite`
+    instead of the `current_map_sprite`, which meant that they were detected
+    before the actal state was set.
+
+New Features
+
+[x] Implement battle mode
+[x] Scoring and visualization
+[x] Win
+[x] Stop spray at map blockers
+[x] Burn map
+[x] Freeze map
+
+  
+S23: Tuning Weapons
+------------------------------------------------------------------
+
+Make weapons fire both before AND after movement/turn. This makes them
+easier to use and increases chaos. I reduced the `SPRAY_RANGE` by 1
+because this would otherwise allow one attack to cover about 1/4 of the entire
+map of hexes due to the rotation in between.
+
+[x] Fix: future_hex_angle gets out of sync still. I didn't have
+    a consistently reproducible test case, but I wrapped a lot of assignments
+    in angle wrapping code and it hasn't happened in a while.
+[x] Fix: Not getting a guaranteed reverse as intended every move.
+[x] Increase hand size in battle mode to 7
+[x] Switch the attack modifier to slot 0 and the guaranteed
+    reverse to slot 1, shifting the other modifiers
+[x] Burn entities
+[x] Freeze entities
+
+Battle mode is now feature complete...the game is feature complete!
+
+Game size is 719 statements, 16 sounds, 606k pixels.
+
+
+Post-Mortem
+-----------------------------------------------------------------------------
+Reflecting on the game at this point: _Beyond Control_ is now feature complete and
+"done" from a game jam perspective. I cut the Quest game type for now. Battle and 
+Race are fully implemented and have been playtested a bit. 
+
+It needs a ton of polish on art, sound effects, and especially UI animations. I came
+in around the time limit that I was looking for of "three day jam", but it was spread
+over three-plus weeks because of extenuating circumstances and schedules that prevented
+me from actually coding very long on any given day. 
+
+The scope is kind of aggressive for a jam game at my desired level of completion, but it
+worked. I'm very happy that I succeeded in my primary goal, which was making _RoboRally_
+more fun and intuitive for players like me who can't deal with either its pacing or the
+rotation confusion.
+
+The secondary goals of making a video game that works like a real-time boardgame 
+mechanically and that uses hex grids were also achieved. The in-game atmosphere in sound
+and visuals don't live up to my goals of "city ruins uplifitingly reclaimed by nature", although 
+the title screen does deliver that acceptably. It satisfies the "out of control" GMTK'20 
+prompt fully and more-or-less makes that partial loss of control an interesting puzzle instead
+of a frustration. 
+
+I rate this game a solid B for an experienced developer's jam game, where I think our
+previous Ludum Dare _Across the Lake_ was an A. 
+
+Quadplay made this game possible. I don't think I could have achieved it within the time
+constraints using any other engine right now. The transition to hex coordinates worked
+extremely well because the quadplay resolution and math libraries anticipated alternative
+schemes. Having Tiled as a map editor made it easy to create lots of maps. 
+
+Built-in sprite rotation and scaling were great, and there was plenty of performance for me to just
+brute force the graphics and computation. I never optimized anything except the core hex
+routines. That wasn't even necessary; it was anticipating future reuse. The map preview rendering is all handled with the camera feature and greatly simplified 
+the minimap "icons". I thought I was going to have to offline generate the minimap images
+by hand, and instead I just brute force rendered multiple maps with extreme zoom at runtime
+and it worked.
+
+I used quadplay's `delay()`, `sequence()`, and mode features heavily for animation and UI.
+They made it really simple to do things that could have required lots of ugly, buggy code.
+This was a big deal and enabled me for the first time to do a lot of UI and UI animation
+for a jam game. 
+
+I was bitten by checking in the `DEBUG` flag and other debugging options a few times. That
+happens on every jam. The upcoming debug constant layer for quadplay will address this
+and I can't wait to have that. I used the new CSV file import and in-IDE sprite JSON editing.
+The CSV import was convienient, although I could have used JSON or a code generator if 
+needed. The sprite JSON editing is still not fully supported in quadplay's IDE. It was
+just good enough to use, but the 1.0 version will be very welcome. IDE search-and-replace in
+files will be handy. I fell back to using `grep` and emacs during some refactoring at the end. 
+So, no new engine or IDE feature requests from this game, for the first time...just eager
+anticipation of the 1.0 features already on the quadplay roadmap.
+
+In terms of workflow, even with diminished resources my standard practice of journaling and
+maintaining a bare-bones game design doc worked well. Actually, it helped a lot with
+diminished resources because I was able to do most of the design work "offline" and didn't
+have to spend much cognition remembering or planning while programming. I put a lot more
+into the quadplay `todo()` system than the design doc for actual TODO lists and that was
+both effective and motivating. 
+
+Photoshop + Audacity + ImageOptim + Tiled were fine tools as always and interacted well
+with the IDE. git was adequate in this case and I never got bitten by anything with it,
+probably because there were only two of us.
+
+I should have chosen a single area of focus instead of two. I had an aggressive
+gameplay/mechanic idea _and_ a strong thematic vision. Because I ultimately had to
+choose between them, I executed on the
+gameplay but did not succeed with the theme. It would have been better to adopt existing
+assets almost entirely (although good hex assets are tough to find) or use an abstract
+theme instead of splitting my efforts over two areas. Or, if I had teamed up with someone
+working exclusively on sound and art, then maybe it would have been viable to try and excel
+in two areas at once.
+
+The scope was a little large for a jam. I think I should pull back more next time.
+I'm not going to beat myself up over it because I wanted something a little
+less casual and did pull that off. But more casual and then polished as a result definitely leaves
+me more satisfied at the end of a jam (hence my "Casual + Effects" handle.)
+
+In terms of positioning for a jam game, this is  acceptable, but not great. It can be
+played in a browser, supports single player, and requires no backstory or instructions.
+Those are all good. But it takes 15 minutes to really appreciate and is best with two
+or more players. An ideal jam game could be appreciated in 5 minutes with a single player.
+
+Special thanks to the quadplay community for support and suggestions, 
+and especially Stephan Steinbach for suggesting the UI design pattern
+and axial hex coordinates.
+
+The game size is 728 statements, 16 sounds, and 606k pixels.
+"Statements" in quadplay are a reasonable measure of code complexity
+that excludes comments and standard libraries, collapses multi-line expressions,
+and excludes some syntax such as function definition and local scope lines.
+Pixels include font sheets.
+
+
+S24: Polish
+------------------------------------------------------------------
+
+[x] Fix fire not melting ice (ice wasn't flagged with `can_melt` in the sprite.json!)
+[x] Draw damage on robots
+[x] Make robots have more unique shapes
+[x] Sparks from the robots when they move
+[x] Remove unused spawn tiles to generic 0,0 sprite
+[x] Battle mode score animation and sound
+   [x] Flash bar when scoring
+   [x] Animate stars when scoring
+   [x] Play powerup or coin sound when scoring
+[x] Burn spray sound (flame thrower)
+[x] Freeze spray sound (fire extinguisher)
+[x] Remove debugging/assertions around `future_hex_angle`
+
+![Early version of scoring animation](screenshots/Beyond_Control_2020-08-01_16h12.gif)
+![Damage and more visual differentiation on the robots](screenshots/robot-72x72.png width=200% class="pixel")
+
+Game size is 747 statements, 20 sounds, 606k pixels.
+
+
+S25: Battle Map Tuning
+------------------------------------------------------------------
+
+During battle map playtesting we found that for 2-player battles it
+is very important to have a short distance from spawn to end zone in order
+to keep players engaged with each other. We moved the end zone closer to
+the spawns and added more conveyor belts in most maps to enhance this.
+We also added a few more specific blocking walls to protect spawns,
+and removed some to make it easier to reach the end zone.
+
+Players wanted a faster way to input on battle mode, so I made the cursor
+wrap around the action bar.
+
+To prevent turtling on the endzone in battle mode and help with handicapping,
+we changed the scoring to only awarding points when the player moves onto
+a goal square rather than the entire time the player is there. This forces
+a player in the end zone to keep moving. We made the amount of points awarded
+per move scale up as difficulty goes down, so that less-good players have
+an advantage.
+
+During playtesting we tuned the base score per move down from 15% to 5%, which
+seemed good for level 4 and 5 players.
+
+[x] Show map title on the win screen
+[x] Make cursor wrap around
+[x] Fix: Instructions are not being wiped when players die and
+    it can cause players to drive off the map. Use an epoch
+    counter to ensure that a delayed instruction occurs during
+    the same spawn epoch that it was issued in
+[x] After respawning, give the initial instruction hand instead
+    of random ones
+[x] Make players in battle mode have to move to continue scoring
+[x] Animate teleportation
+
+Game size is now 767 statements, 19 sounds, 606k pixels
+
+
+S26: More Polish
+------------------------------------------------------------------
+
+[x] Add cosmetic smoke coming from robots
+[x] Increase sparks, to every action
+[x] Add ambient sounds to maps
+[x] Yellow robot's color is being read as white due to new damage sprites...change the sprite pixels
+[x] Fix: After death and respawn, player entities have the wrong 
+    angle. All angle state is being reset in and the epoch
+    counter _should_ prevent any async callbacks from changing
+    it after teleportation, but the robot still thinks it is on the wrong
+    angle after teleport. (Solution: I've patched this many times, but each
+    patch refactored and appears to have missed something different.
+    this time, the angles were all reset, but the instruction queue wasn't
+    erased. Fixed...*again*)
+[x] Add teleport sound
+[ ] Make preview.png image
+[ ] ~~Improve first turn instructions:~~
+   [ ] ~~Show arrow instructions until three movements~~
+   [ ] ~~Then show (a) until three actions~~
+   [ ] ~~Show (d) for the next turn~~
+[ ] ~~Animate flag sprite~~
+
+![Smoke and sparks add life to the robots and make clear that they are malfunctioning.](screenshots/Beyond_Control_Z3_02h40.gif)
+
+I made another pass over the code. I removed about 20 statements through
+abstraction and IDE constants, and removed vestigial debugging paths. 
+
+Another 20 statements
+can be removed by moving the entire "vapor" sprite particle system into
+the quadplay general particle system script. I don't plan to do that right
+now because it will involve refactoring other games that use it,
+but I think it would be a great way to expand the utility of that system
+in the near future.
+
+Game size is 764 statements, 25 sounds, 606k pixels.
+
+<style>
+body, .md a { font-family: Verdana, Arial }
+</style>
+<!-- Markdeep: --><script src="../../doc/markdeep.min.js"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
+
