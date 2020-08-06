@@ -3,6 +3,13 @@
                   *Game Design Document*
                       Morgan McGuire
 
+_This is the design document for a game jam I did with one of my children, although
+we spread the same amount of time over two months instead of a long weekend. I share
+my design docs and change logs to help demonstrate process for folks learning
+game and software development.
+[Play the final version online](https://morgan3d.github.io/quadplay/console/quadplay.html?game=quad://games/beyond_control/),
+best with multiple players and controllers._
+                 
 **Setting**: Broken-down mechs in a world reclaimed by nature
 
 **Pitch**: RoboRally meets Dominion
@@ -178,7 +185,8 @@ New design: "[RoboRally](https://boardgamegeek.com/boardgame/18/roborally) meets
   and then executes it. Execution always happens on a regular, slow clock.
 
 - If the player stalls too long, then the robot "reboots" and both
-  streams completely reset. This is to prevent a player from 
+  streams completely reset. This is to prevent a player from spawn camping
+  or reaching a standoff by just holding still.                 
 
 The icons for actions rotate to match the alignment that they will be
 in if this stream is chosen. They are also colored to provide some
@@ -195,7 +203,7 @@ following actions relative. That requires extra animation and is a lot harder fo
 the player to think about than absolute directions. I suspect that I'll end up
 using absolute directions to simplify further.
 
-![Smaller, color-coded icons](screenshots/card_icon_17x17.png class="pixel") ![Even smaller icons for more UI space](screenshots/card_icon_11x11.png  class="pixel") ![Action stream UI](screenshots/Slowbots_2020-07-13_07h39.png class="pixel")
+![Smaller, color-coded icons](screenshots/card_icon_17x17.png class="pixel") ![Even smaller icons for more UI space](screenshots/card_icon_11x11.png  class="pixel") ![Action stream UI](screenshots/Slowbots_X3_07h39.png class="pixel")
 
 
 S3: Simplify More
@@ -236,7 +244,7 @@ will be adjacent without overlap, then 32x32 tiles with 2-pixel points
 works particularly well when the borders are either shaded or there are
 no borders, and provides an integer tiling of the quadplay screen.
 
-![31x32 with 3-pixel points vs. 32x32 with 2-pixel points](screenshots/Slowbots_2020-07-13_07h39-hex-types.png class="pixel" width=200% style="background:#ccc") ![32x32 with shading](screenshots/Slowbots_2020-07-13_07h39-shaded.png class="pixel" width=200%)
+![31x32 with 3-pixel points vs. 32x32 with 2-pixel points](screenshots/Slowbots_X3_07h39-hex-types.png class="pixel" width=200% style="background:#ccc") ![32x32 with shading](screenshots/Slowbots_X3_07h39-shaded.png class="pixel" width=200%)
 
 S4: Graphics
 ------------------------------------------------------------------
@@ -247,7 +255,7 @@ bit of tweaking, and while quadplay can't run the optimized map rendering
 with them, it can still handle this simple scene in 1.8ms (on a MacBook Pro),
 so I think I can get away with the explicit map rendering.
 
-![Some robots, a map, and UI](screenshots/Slowbots_2020-07-13_20h24.png)
+![Some robots, a map, and UI](screenshots/Slowbots_X3_20h24.png)
 
 Nothing here is live. The next big step will be figuring out how to animate
 both the UI and the robots in an elegant way. I don't want to maintain a lot
@@ -307,7 +315,7 @@ coordinates used for rendering only.
 I used https://www.redblobgames.com/grids/hexagons/ as a resource but
 still had to do a lot of adjustment for my axes and pixel scaling.
 
-![Test of hex-space animation transformed to world space](screenshots/Slowbots_2020-07-14_18h51.gif)
+![Test of hex-space animation transformed to world space](screenshots/Slowbots_X4_18h51.gif)
 
 Currently at 76 statements, 0 sounds, 42k pixels
 
@@ -360,7 +368,7 @@ first:
   exceptional activities, such as a bridge collapsing, will happen on a character's turn
   if triggered by that character and be injected between turns if they happen automatically
 
-![Variable velocity to cover rotation time](screenshots/Slowbots_2020-07-15_22h41-adjusting-animation-to-constant-turns.gif) ![60 degrees rotate = 1 hex translate time](screenshots/Slowbots_2020-07-15_22h44-rotation-as-instruction.gif)
+![Variable velocity to cover rotation time](screenshots/Slowbots_X5_22h41-adjusting-animation-to-constant-turns.gif) ![60 degrees rotate = 1 hex translate time](screenshots/Slowbots_X5_22h44-rotation-as-instruction.gif)
 
 The above simulation shows that the velocity appears variable on the left
 and constant on the right. I like the right better, which matches the new plan.
@@ -412,7 +420,7 @@ Now at 108 statements, 0 sounds, 53k pixels.
 
 ![Old, small icons](screenshots/action-8x8.png class="pixel" width=200%) ![New, larger icons](screenshots/action-11x10.png class="pixel" width=200%)
 
-![New nature graphics](screenshots/Slowbots_2020-07-17_10h19.png class="pixel" style="border:1px solid")
+![New nature graphics](screenshots/Slowbots_X7_10h19.png class="pixel" style="border:1px solid")
 
 S8: Hand
 ------------------------------------------------------------------
@@ -429,7 +437,7 @@ should be reduced by taking the actions immediately.
 [x] Refill the hand when empty
 [x] *Always* give a 0X modifier
 
-![New user interface and mechanic](screenshots/Slowbots_2020-07-17_11h58.png class="pixel" style="border:1px solid")
+![New user interface and mechanic](screenshots/Slowbots_X7_11h58.png class="pixel" style="border:1px solid")
 
 Game size is 123 statements, 0 sounds, 53k pixels.
 
@@ -452,7 +460,7 @@ S9: Modifiers
 [x] Shift UI to remain visible when other players are nearby
 [x] Add optional UI on screen edges
 
-![Adaptive UI layout](screenshots/Slowbots_2020-07-18_12h18.gif style="border: 1px solid") ![UI on the edge of the screen](screenshots/Slowbots_2020-07-18_12h29.gif style="border: 1px solid")
+![Adaptive UI layout](screenshots/Slowbots_X8_12h18.gif style="border: 1px solid") ![UI on the edge of the screen](screenshots/Slowbots_X8_12h29.gif style="border: 1px solid")
 
 Game size is 184 statements, 0 sounds, 63k pixels
 
@@ -510,7 +518,7 @@ Further playtest feedback:
    [x] Draw animations
    [x] Add animation support to map drawing
 
-![Working conveyor belts](screenshots/Slowbots_2020-07-18_22h37.gif style="border:1px solid")
+![Working conveyor belts](screenshots/Slowbots_X8_22h37.gif style="border:1px solid")
 
 Game size is now 242 statements, 0 sounds, 147k pixels.
 
@@ -565,9 +573,9 @@ Playtest feedback:
     itself rotate based on the `final_hex_angle` so that it is a little easier to use
   - "Turn" modifiers that rotate the direction of regular arrows
 
-![Game over menu](screenshots/Beyond_Control_2020-07-20_00h11.gif)
+![Game over menu](screenshots/Beyond_Control_Y0_00h11.gif)
 
-![Game structure](screenshots/Slowbots_2020-07-20-modes.png)
+![Game structure](screenshots/Slowbots_Y0-modes.png)
 
 Game size is now 429 statements, 1 sounds, 561k pixels.
 
@@ -583,7 +591,7 @@ S14: Race Maps
 [x] Redraw title screen for better theming
 [x] Redraw tiles for stronger visual contrast and clearer conveyor motion
 
-![Title and map selection](screenshots/Beyond_Control_2020-07-21_23h06.png) ![Indoor map](screenshots/Beyond_Control_2020-07-21_23h07.png) ![Outdoor map](screenshots/Beyond_Control_2020-07-21_23h08.png)
+![Title and map selection](screenshots/Beyond_Control_Y1_23h06.png) ![Indoor map](screenshots/Beyond_Control_Y1_23h07.png) ![Outdoor map](screenshots/Beyond_Control_Y1_23h08.png)
 
 Game size is 450 statements, 1 sounds, 735k pixels.
 
@@ -600,8 +608,8 @@ S15: New Race Maps
 
 The current set of race maps:
 
-![](screenshots/2020-07-22-a.png) ![](screenshots/2020-07-22-b.png) ![](screenshots/2020-07-22-c.png)
-![](screenshots/2020-07-22-d.png) ![](screenshots/2020-07-22-e.png)
+![](screenshots/Y2-a.png) ![](screenshots/Y2-b.png) ![](screenshots/Y2-c.png)
+![](screenshots/Y2-d.png) ![](screenshots/Y2-e.png)
 
 Game size is now 470 statements, 1 sounds, 809k pixels.
 
@@ -706,7 +714,7 @@ only needed a few lines of code each.
 [x] Add rotation direction modifiers at highest difficulty
 [x] Show titles & descriptions of maps on selection screen
 
-![New menus and transitions](screenshots/Beyond_Control_2020-07-24_03h05.gif)
+![New menus and transitions](screenshots/Beyond_Control_Y4_03h05.gif)
 
 Game size is now 576 statements, 10 sounds, 367k pixels.
 Previous pixel counts were incorrect due to a double-counting bug
@@ -763,9 +771,9 @@ hope to return to it in the future for polish. I'd very much like to redo
 most of the in-game art or connect with a real pixel artist for that, which
 would be another good post-completion polish pass.
 
-![Current action icons](screenshots/2020-07-26-action.png class="pixel" width=200%)
+![Current action icons](screenshots/Y6-action.png class="pixel" width=200%)
 
-![Current hex tiles (lots of reserved space at the bottom)](screenshots/2020-07-26-hex.png class="pixel")
+![Current hex tiles (lots of reserved space at the bottom)](screenshots/Y6-hex.png class="pixel")
 
 New in this session:
 
@@ -784,7 +792,7 @@ New in this session:
     within `SPRAY_RANGE` for movement and spraying, and within `2 SPRAY_RANGE` for both spraying
 
 
-![SPRAY instruction](screenshots/Beyond_Control_2020-07-27_00h22.gif)
+![SPRAY instruction](screenshots/Beyond_Control_Y7_00h22.gif)
 
 Game size is now 641 statements, 11 sounds, 396k pixels.
 
@@ -978,7 +986,7 @@ S24: Polish
 [x] Freeze spray sound (fire extinguisher)
 [x] Remove debugging/assertions around `future_hex_angle`
 
-![Early version of scoring animation](screenshots/Beyond_Control_2020-08-01_16h12.gif)
+![Early version of scoring animation](screenshots/Beyond_Control_Z1_16h12.gif)
 ![Damage and more visual differentiation on the robots](screenshots/robot-72x72.png width=200% class="pixel")
 
 Game size is 747 statements, 20 sounds, 606k pixels.
