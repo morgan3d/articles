@@ -131,6 +131,101 @@ The world-space pixel `(0, 0)` is at the lower-left of the screen,
 which corresponds to the center of a hex in the last row of the map.
 
 
+Post Analysis
+==================================================================
+
+Reflecting on the game at this point: _Beyond Control_ is now feature complete and
+"done" from a game jam perspective. I cut the Quest game type for now. Battle and 
+Race are fully implemented and have been playtested a bit. 
+
+It needs a ton of polish on art, sound effects, and especially UI animations. I came
+in around the time limit that I was looking for of "three day jam", but it was spread
+over three-plus weeks because of extenuating circumstances and schedules that prevented
+me from actually coding very long on any given day. 
+
+The scope is kind of aggressive for a jam game at my desired level of completion, but it
+worked. I'm very happy that I succeeded in my primary goal, which was making _RoboRally_
+more fun and intuitive for players like me who can't deal with either its pacing or the
+rotation confusion.
+
+The secondary goals of making a video game that works like a real-time boardgame 
+mechanically and that uses hex grids were also achieved. The in-game atmosphere in sound
+and visuals don't live up to my goals of "city ruins uplifitingly reclaimed by nature", although 
+the title screen does deliver that acceptably. It satisfies the "out of control" GMTK'20 
+prompt fully and more-or-less makes that partial loss of control an interesting puzzle instead
+of a frustration. 
+
+I rate this game a solid B for an experienced developer's jam game, where I think our
+previous Ludum Dare _Across the Lake_ was an A. 
+
+Quadplay made this game possible. I don't think I could have achieved it within the time
+constraints using any other engine right now. The transition to hex coordinates worked
+extremely well because the quadplay resolution and math libraries anticipated alternative
+schemes. Having Tiled as a map editor made it easy to create lots of maps. 
+
+Built-in sprite rotation and scaling were great, and there was plenty of performance for me to just
+brute force the graphics and computation. I never optimized anything except the core hex
+routines. That wasn't even necessary; it was anticipating future reuse. The map preview rendering is all handled with the camera feature and greatly simplified 
+the minimap "icons". I thought I was going to have to offline generate the minimap images
+by hand, and instead I just brute force rendered multiple maps with extreme zoom at runtime
+and it worked.
+
+I used quadplay's `delay()`, `sequence()`, and mode features heavily for animation and UI.
+They made it really simple to do things that could have required lots of ugly, buggy code.
+This was a big deal and enabled me for the first time to do a lot of UI and UI animation
+for a jam game. 
+
+I was bitten by checking in the `DEBUG` flag and other debugging options a few times. That
+happens on every jam. The upcoming debug constant layer for quadplay will address this
+and I can't wait to have that. I used the new CSV file import and in-IDE sprite JSON editing.
+The CSV import was convienient, although I could have used JSON or a code generator if 
+needed. The sprite JSON editing is still not fully supported in quadplay's IDE. It was
+just good enough to use, but the 1.0 version will be very welcome. IDE search-and-replace in
+files will be handy. I fell back to using `grep` and emacs during some refactoring at the end. 
+So, no new engine or IDE feature requests from this game, for the first time...just eager
+anticipation of the 1.0 features already on the quadplay roadmap.
+
+In terms of workflow, even with diminished resources my standard practice of journaling and
+maintaining a bare-bones game design doc worked well. Actually, it helped a lot with
+diminished resources because I was able to do most of the design work "offline" and didn't
+have to spend much cognition remembering or planning while programming. I put a lot more
+into the quadplay `todo()` system than the design doc for actual TODO lists and that was
+both effective and motivating. 
+
+Photoshop + Audacity + ImageOptim + Tiled were fine tools as always and interacted well
+with the IDE. git was adequate in this case and I never got bitten by anything with it,
+probably because there were only two of us.
+
+I should have chosen a single area of focus instead of two. I had an aggressive
+gameplay/mechanic idea _and_ a strong thematic vision. Because I ultimately had to
+choose between them, I executed on the
+gameplay but did not succeed with the theme. It would have been better to adopt existing
+assets almost entirely (although good hex assets are tough to find) or use an abstract
+theme instead of splitting my efforts over two areas. Or, if I had teamed up with someone
+working exclusively on sound and art, then maybe it would have been viable to try and excel
+in two areas at once.
+
+The scope was a little large for a jam. I think I should pull back more next time.
+I'm not going to beat myself up over it because I wanted something a little
+less casual and did pull that off. But more casual and then polished as a result definitely leaves
+me more satisfied at the end of a jam (hence my "Casual + Effects" handle.)
+
+In terms of positioning for a jam game, this is  acceptable, but not great. It can be
+played in a browser, supports single player, and requires no backstory or instructions.
+Those are all good. But it takes 15 minutes to really appreciate and is best with two
+or more players. An ideal jam game could be appreciated in 5 minutes with a single player.
+
+Special thanks to the quadplay community for support and suggestions, 
+and especially Stephan Steinbach for suggesting the UI design pattern
+and axial hex coordinates.
+
+The game size is 728 statements, 16 sounds, and 606k pixels.
+"Statements" in quadplay are a reasonable measure of code complexity
+that excludes comments and standard libraries, collapses multi-line expressions,
+and excludes some syntax such as function definition and local scope lines.
+Pixels include font sheets.
+
+
 Change Log
 ==================================================================
 
@@ -874,100 +969,6 @@ map of hexes due to the rotation in between.
 Battle mode is now feature complete...the game is feature complete!
 
 Game size is 719 statements, 16 sounds, 606k pixels.
-
-
-Post-Mortem
------------------------------------------------------------------------------
-Reflecting on the game at this point: _Beyond Control_ is now feature complete and
-"done" from a game jam perspective. I cut the Quest game type for now. Battle and 
-Race are fully implemented and have been playtested a bit. 
-
-It needs a ton of polish on art, sound effects, and especially UI animations. I came
-in around the time limit that I was looking for of "three day jam", but it was spread
-over three-plus weeks because of extenuating circumstances and schedules that prevented
-me from actually coding very long on any given day. 
-
-The scope is kind of aggressive for a jam game at my desired level of completion, but it
-worked. I'm very happy that I succeeded in my primary goal, which was making _RoboRally_
-more fun and intuitive for players like me who can't deal with either its pacing or the
-rotation confusion.
-
-The secondary goals of making a video game that works like a real-time boardgame 
-mechanically and that uses hex grids were also achieved. The in-game atmosphere in sound
-and visuals don't live up to my goals of "city ruins uplifitingly reclaimed by nature", although 
-the title screen does deliver that acceptably. It satisfies the "out of control" GMTK'20 
-prompt fully and more-or-less makes that partial loss of control an interesting puzzle instead
-of a frustration. 
-
-I rate this game a solid B for an experienced developer's jam game, where I think our
-previous Ludum Dare _Across the Lake_ was an A. 
-
-Quadplay made this game possible. I don't think I could have achieved it within the time
-constraints using any other engine right now. The transition to hex coordinates worked
-extremely well because the quadplay resolution and math libraries anticipated alternative
-schemes. Having Tiled as a map editor made it easy to create lots of maps. 
-
-Built-in sprite rotation and scaling were great, and there was plenty of performance for me to just
-brute force the graphics and computation. I never optimized anything except the core hex
-routines. That wasn't even necessary; it was anticipating future reuse. The map preview rendering is all handled with the camera feature and greatly simplified 
-the minimap "icons". I thought I was going to have to offline generate the minimap images
-by hand, and instead I just brute force rendered multiple maps with extreme zoom at runtime
-and it worked.
-
-I used quadplay's `delay()`, `sequence()`, and mode features heavily for animation and UI.
-They made it really simple to do things that could have required lots of ugly, buggy code.
-This was a big deal and enabled me for the first time to do a lot of UI and UI animation
-for a jam game. 
-
-I was bitten by checking in the `DEBUG` flag and other debugging options a few times. That
-happens on every jam. The upcoming debug constant layer for quadplay will address this
-and I can't wait to have that. I used the new CSV file import and in-IDE sprite JSON editing.
-The CSV import was convienient, although I could have used JSON or a code generator if 
-needed. The sprite JSON editing is still not fully supported in quadplay's IDE. It was
-just good enough to use, but the 1.0 version will be very welcome. IDE search-and-replace in
-files will be handy. I fell back to using `grep` and emacs during some refactoring at the end. 
-So, no new engine or IDE feature requests from this game, for the first time...just eager
-anticipation of the 1.0 features already on the quadplay roadmap.
-
-In terms of workflow, even with diminished resources my standard practice of journaling and
-maintaining a bare-bones game design doc worked well. Actually, it helped a lot with
-diminished resources because I was able to do most of the design work "offline" and didn't
-have to spend much cognition remembering or planning while programming. I put a lot more
-into the quadplay `todo()` system than the design doc for actual TODO lists and that was
-both effective and motivating. 
-
-Photoshop + Audacity + ImageOptim + Tiled were fine tools as always and interacted well
-with the IDE. git was adequate in this case and I never got bitten by anything with it,
-probably because there were only two of us.
-
-I should have chosen a single area of focus instead of two. I had an aggressive
-gameplay/mechanic idea _and_ a strong thematic vision. Because I ultimately had to
-choose between them, I executed on the
-gameplay but did not succeed with the theme. It would have been better to adopt existing
-assets almost entirely (although good hex assets are tough to find) or use an abstract
-theme instead of splitting my efforts over two areas. Or, if I had teamed up with someone
-working exclusively on sound and art, then maybe it would have been viable to try and excel
-in two areas at once.
-
-The scope was a little large for a jam. I think I should pull back more next time.
-I'm not going to beat myself up over it because I wanted something a little
-less casual and did pull that off. But more casual and then polished as a result definitely leaves
-me more satisfied at the end of a jam (hence my "Casual + Effects" handle.)
-
-In terms of positioning for a jam game, this is  acceptable, but not great. It can be
-played in a browser, supports single player, and requires no backstory or instructions.
-Those are all good. But it takes 15 minutes to really appreciate and is best with two
-or more players. An ideal jam game could be appreciated in 5 minutes with a single player.
-
-Special thanks to the quadplay community for support and suggestions, 
-and especially Stephan Steinbach for suggesting the UI design pattern
-and axial hex coordinates.
-
-The game size is 728 statements, 16 sounds, and 606k pixels.
-"Statements" in quadplay are a reasonable measure of code complexity
-that excludes comments and standard libraries, collapses multi-line expressions,
-and excludes some syntax such as function definition and local scope lines.
-Pixels include font sheets.
 
 
 S24: Polish
