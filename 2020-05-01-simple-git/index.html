@@ -158,7 +158,7 @@ sudo apt-get install git-lfs
 git lfs install
 
 # Optional, for password caching
-git config --global credential.helper cache
+git config --global credential.helper 'cache --timeout=360000'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
