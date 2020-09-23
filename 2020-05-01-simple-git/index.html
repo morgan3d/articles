@@ -97,11 +97,13 @@ the essential differences of git for you are:
   machine but are only looking at one at a time. Everyone can see all
   [remote] branches that have been pushed.
   
-- The default branch is called "`main`" (previously, "`master`"). If you have to supply a
+- The default branch is called "`master`" (which will hopefully be
+  renamed to "`main`" soon; everyone is waiting on github to fully support
+  this on their website). If you have to supply a
   branch name to a command and don't know what is going on, that's the
   one that you want. Simple branching in git is not too hard, although
   for solo work or small teams, you can probably work directly in
-  main. I usually do.
+  master. I usually do.
 
 - The all-capitals "`HEAD`" is the latest revision ("commit") in the branch that your
   local workspace is viewing. _A_ lower-case `"head"` is that revision for any branch.
@@ -379,6 +381,17 @@ git revert <hash> && git commit -am "reverted to <hash>" && git push
 The hash will be a long, hexadecimal number such as `cf80d8dbacc6fc90e3c86a5f1dac615bd9aab1ae`.
 
 
+Revert My Whole Branch
+--------------------------------------------------------------------------------
+You want to keep your branch, but want to reset ot the the state of
+the main branch.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+git checkout my_branch
+git reset --hard master
+git push --force origin my_branch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Repo URL
 =================================================================================
 
@@ -475,7 +488,7 @@ If you instead want to discard all of your own unpushed changes and have clean
 state matching a fresh clone of the main branch, use:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
-git merge --abort && git reset --hard origin/main && git pull
+git merge --abort && git reset --hard origin/master && git pull
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (Equivalent in subversion to deleting the conflicted files and then running
@@ -490,7 +503,7 @@ just want everything to go back to the last commit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git reset --hard
-git checkout main
+git checkout master
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (Really, only one is probably necessary, but you're in a bad way here)
@@ -547,7 +560,7 @@ and static web applications. This article is hosted on github pages.
 
 The page will then display the URL at which your repo is hosted. Note that it
 is on github.io, not github.com, for security reasons. It updates nearly instantaneously
-after a push to main.
+after a push to master.
 
 You can host any static web content using this feature. There are some limited 
 features for dynamic content and database access as well.
@@ -588,7 +601,7 @@ Subversion branches are lazy-copied entire directories. That's such a different 
 from git branches that I chose not to include any SVN analogous commands here.
 
 Git branches are fairly easy to use for simple cases. For many of my changes, I still just 
-work directly on main on research and prototyping projects because "fairly easy" isn't the same as "zero cost tooling".
+work directly on the main branch on research and prototyping projects because "fairly easy" isn't the same as "zero cost tooling".
 But when I'm making a "build breaking" change such as a refactor or there are a large number of collaborators, I start using
 branches in lightweight way. Once a branch is created, my typical workflow is:
 
@@ -602,11 +615,11 @@ git checkout <mybranch>
 git commit -am "<message>" && git push
 # ... repeat until reaching a good stopping point
 
-# Bring in the latest changes from main to my branch
-git merge main && git push
+# Bring in the latest changes from master to my branch
+git merge master && git push
 
-# Move my changes to main
-git checkout main
+# Move my changes to master
+git checkout master
 git merge <mybranch> && git push
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -640,18 +653,18 @@ Change
 ---------------------------------------------------------------------------------
 
 Switch your workspace to another branch (including one that someone
-else created or `main`), losing any uncommitted changes:
+else created or `master`), losing any uncommitted changes:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git checkout <branchname>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return to the main branch with `git checkout main`.
+Return to the main branch with `git checkout master`.
 
 Merge (Manual CLI)
 ---------------------------------------------------------------------------------
 
-Merge another branch _into the current one_ (which might be `main`):
+Merge another branch _into the current one_ (which might be `master`):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
 git merge <sourcebranchname>
@@ -665,7 +678,7 @@ Merge (Web Pull Request)
 ---------------------------------------------------------------------------------
 
 To submit a "pull request" for someone else to approve and merge
-from your branch to another (usually `main`) using the website: 
+from your branch to another (usually `master`) using the website: 
 
 1. On the website, click on "Pull Requests" 
 2. Select the green "New pull request" button.
