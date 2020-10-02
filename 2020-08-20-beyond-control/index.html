@@ -132,6 +132,8 @@ Most of the game runs in hex coordinates using the axial method and
 The world-space pixel `(0, 0)` is at the lower-left of the screen,
 which corresponds to the center of a hex in the last row of the map.
 
+The coordinate system math and hex map rendering is in
+[`hex_grid.pyxl`](https://github.com/morgan3d/quadplay/blob/master/games/beyond_control/hex_grid.pyxl).
 
 Post Analysis
 ==================================================================
@@ -402,7 +404,8 @@ S6: Hex Math
 
 I implemented the coordinate system mappings between pixels, hexes,
 and map offset coords; as well as between screen/world-space angles
-and hex-space angles; hex-snapping; and the hex-angle to hex-direction function.
+and hex-space angles; hex-snapping; and the hex-angle to hex-direction
+function.
 
 Robots can now be specified with a `hex_pos` and `hex_angle` and
 the world-space values are computed from them every frame. This allows
