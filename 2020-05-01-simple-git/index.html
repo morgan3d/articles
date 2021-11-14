@@ -142,6 +142,7 @@ macOS ("OS X")
 3. Double-click to unzip the LFS package and run `sudo ./install.sh` from it
 4. Run `git lfs install` (yes, this is different from step #3)
 5. Optionally run `git config --global credential.helper osxkeychain` for password caching
+6. Optionally install https://github.com/github/hub manually or via `brew install hub`
 
 
 Windows
@@ -149,6 +150,7 @@ Windows
 1. Install git from https://git-scm.com/download/win
 2. Install LFS from https://git-lfs.github.com/
 3. Run `git lfs install` (yes, this is different from step #2)
+4. Optionally install hub.exe by downloading from https://github.com/github/hub/releases/latest and manually placing somewhere in your PATH
 
 
 Ubuntu or Debian
@@ -160,7 +162,10 @@ sudo apt-get install git-lfs
 git lfs install
 
 # Optional, for password caching
-git config --global credential.helper 'cache --timeout=360000'
+git config --global credential.helper store
+
+# Optional, for easier branch management
+sudo apt install hub
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -169,6 +174,7 @@ Other Linux
 1. Download and install git according to https://git-scm.com/download/linux
 2. Install LFS with according to https://github.com/git-lfs/git-lfs/wiki/Installation
 3. Run `git lfs install` (this is different from step #2)
+4. Optionally install hub according to https://github.com/github/hub
 
 
 Fetch
@@ -260,6 +266,12 @@ Download
 Download the changes that others have made to your local machine.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+# Get changes to all branches:
+
+hub sync
+
+# or, to get changes to only the branch that you are currently on:
+
 git pull
 
 # (and then clean up any merge conflicts)
