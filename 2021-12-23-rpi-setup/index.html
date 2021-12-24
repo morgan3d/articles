@@ -1,0 +1,91 @@
+              <meta charset="utf-8" emacsmode="-*- markdown -*-">
+                     **Morgan's New RPi Setup**
+                          2021-12-24
+
+I use the low-cost system-on-a-chip
+[Raspberry Pi](https://www.raspberrypi.org/) computers for many
+projects and frequently have to image them from scratch because I'm
+upgrading the OS or setting up a new SD card. Here's the process I
+use:
+
+
+1. Download the imager from https://www.raspberrypi.com/software/ and
+   run it on a regular computer. It will fetch the latest images
+   itself. Burning the SD card takes about 15 minutes. _FYI: In the
+   image, the default user is "pi", the default password is
+   "raspberry", and the default hostname is "raspberrypi"._
+   
+2. Put the SD card in the Pi and boot it. It will change the partitions
+   around and reboot. 
+
+3. Complete the questions after the reboot in the GUI setup, and then
+   reboot again. 
+   
+4. Configure the basics by pasting the following at the command line.
+   I keep this here as copy-paste instead of in a script because I
+   often need to tweak this slightly as I go.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+# Set variables for the following
+NEW_HOSTNAME=<hostname>
+NAME=<Your Name>
+EMAIL=<your@e.mail>
+
+##################################################
+# git
+
+# git config needed for push
+git config --global user.name "$NAME"
+git config --global user.email "$EMAIL"
+
+# git LFS (do before cloning anything!)
+sudo apt install git-lfs
+git lfs install
+
+# Password caching
+git config --global credential.helper store
+
+# Easier branch management
+sudo apt install hub
+
+##################################################
+# Log2ram (reduce SD card writes)
+mkdir tmp
+pushd tmp
+wget https://github.com/azlux/log2ram/archive/master.tar.gz -O log2ram.tar.gz
+tar xf log2ram.tar.gz
+cd log2ram-master
+sudo ./install.sh
+popd
+rm -rf tmp
+rm log2ram.tar.gz
+
+##################################################
+# Add the current directory to the path
+echo "export \$PATH=.;\$PATH\n" >> ~/.bashrc
+
+##################################################
+# Change hostname
+sudo hostname $NEW_HOSTNAME
+
+##################################################
+# Reboot!
+sudo reboot
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The specifications for the Raspberry Pi 4 are here:
+https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/
+
+It uses a 5V @ 3A = 15W power supply.
+
+<style class="fallback">body{visibility:hidden}</style>
+<style>
+body, .md a { font-family: Arial }
+.md pre.tilde {font-size: 110%; background: #F8F8F0}
+.md h1:before, .md h2:before, .md h3:before, .md h4:before { content: none; }
+.md h1 {border-bottom: 2px solid #000}
+.md h2 {font-size: 110%; border-bottom: none}
+</style>
+<script>markdeepOptions={tocStyle:'short'}</script>
+<script src="../ce-blog.js"> </script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
