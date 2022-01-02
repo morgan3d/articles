@@ -1,4 +1,4 @@
-              <meta charset="utf-8" emacsmode="-*- markdown -*-">
+              <meta charset="utf-8" emacsmode="-*-markdown-*-">
                      **Morgan's New RPi Setup**
                           2021-12-24
 
@@ -68,6 +68,12 @@ echo "export \$PATH=.;\$PATH\n" >> ~/.bashrc
 # Change hostname
 sudo hostname $NEW_HOSTNAME
 
+##################################################
+# Emacs w/ markdown mode
+sudo apt install emacs
+echo "'(\"melpa-stable\" . \"https://stable.melpa.org/packages/\")) (package-initialize)" > ~/.emacs
+emacs --batch --eval "(package-install 'markdown-mode)"
+	      
 ##################################################
 # Reboot!
 sudo reboot
