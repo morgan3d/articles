@@ -62,7 +62,7 @@ rm log2ram.tar.gz
 
 ##################################################
 # Add the current directory to the path
-echo "export \$PATH=.;\$PATH\n" >> ~/.bashrc
+printf "\nexport PATH=.:\$PATH\n" >> ~/.bashrc
 
 ##################################################
 # Change hostname
@@ -70,7 +70,7 @@ sudo hostname $NEW_HOSTNAME
 
 ##################################################
 # Emacs w/ markdown mode
-sudo apt install emacs
+sudo apt --yes install emacs
 echo "'(\"melpa-stable\" . \"https://stable.melpa.org/packages/\")) (package-initialize)" > ~/.emacs
 emacs --batch --eval "(package-install 'markdown-mode)"
 	      
