@@ -1,0 +1,343 @@
+              <meta charset="utf-8" emacsmode="-*-markdown-*-">
+                         **Marine VHF Guide**
+                         Morgan McGuire
+                          2022-12-05
+
+The receiver of a call is the *controlling* station, except for distress
+(mayday) calls, where the vessel in distress is the controlling station.
+
+
+Emergency Transmissions
+=============================================================================
+
+An emergency transmission sequence begins with a voice *call* and is
+followed by a voice *message*. These are often combined into a single 
+transmission.
+
+A DSC *alert* may also be issued before the voice call. 
+
+Each voice transmission begins with a *signal*, such as "Mayday".
+
+
+Safety (Sécurité)
+-----------------------------------------------------------------------------
+
+Broadcast the call on channel 16:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sécurité, sécurité, sécurité
+All stations, all stations, all stations (or rarely, a specific station)
+This is (vessel), (vessel), (vessel)
+Call sign (call sign)
+MMSI number (number)
+
+My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+
+I will broadcast a navigation warning about (summary) on channel 06 (or include here if short).
+
+out
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Then broadcast on the working channel, such as 06
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sécurité, sécurité, sécurité
+All stations, all stations, all stations (or rarely, a specific station)
+This is (vessel), (vessel), (vessel)
+Call sign (call sign)
+MMSI number (number)
+
+My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+
+(nature of the navigation hazard)
+
+over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Urgency (Pan-Pan)
+-----------------------------------------------------------------------------
+
+(_Pronounced "pahn-pahn"_)
+
+On channel 16:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pan-pan, pan-pan, pan-pan
+This is (vessel), (vessel), (vessel)
+Call sign (call sign)
+MMSI number (number)
+
+My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+
+(nature of the urgency)
+
+I have (n) persons aboard
+
+(relevant identifying details for the boat)
+
+(course and speed)
+
+over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Continue monitoring for three minutes after receiving an urgency call.
+
+
+
+Distress (Mayday)
+-----------------------------------------------------------------------------
+
+On channel 16:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mayday, mayday, mayday
+This is (vessel), (vessel), (vessel)
+Call sign (call sign)
+MMSI number (number)
+
+
+Mayday
+My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+
+(the assistance that is required)
+
+I have (n) persons aboard
+
+(relevant identifying details for the boat)
+
+(course and speed)
+
+over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Every following message should begin with `Mayday (vessel)`.
+
+
+Respond to a mayday call with:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mayday (other vessel)
+this is (vessel), (vessel), (vessel)
+Received mayday
+
+...
+
+Over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+End mayday with:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
+Mayday (vessel)
+
+Silence fini ("Seelonce feenee")
+
+Out
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Distress Relay (Mayday Relay)
+-----------------------------------------------------------------------------
+
+On channel 16:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mayday relay, mayday relay, mayday relay
+This is (vessel), (vessel), (vessel)
+Call sign (call sign)
+MMSI number (number)
+
+
+Mayday received from (vessel) at (time/date):
+Their position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+
+(the assistance that is required)
+
+They have (n) persons aboard
+
+(relevant identifying details for the boat)
+
+(course and speed)
+
+over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Routine Transmissions
+=============================================================================
+
+Call:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(receiver), (receiver), (receiver)
+This is (caller), (caller), caller)
+
+On channel (hail channel)
+
+Over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Acknowledge call:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(caller)
+This is (receiver)
+
+Go to working channel (channel, usually 68)
+
+Over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Messages:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
+(other vessel) this is (my vessel)
+...
+Over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+End:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(other vessel) this is (my vessel)
+...
+
+I will monitor (hailing channel)
+
+Out
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Vocabulary
+=============================================================================
+
+Term       |Meaning
+-----------|-----------
+Over       |I am done transmitting and expect a reply
+Out        |I am done transmitting and do not expect a reply (not Over and Out)
+Roger      |I understand what you said
+Wilco      |I understand what you said and will comply
+Unable     |I understand what you said and will not comply
+Affirm     |Yes (not Affirmative)
+Negative   |No
+Break      |I am splitting my message and will resume momentarily
+Acknowledge|Confirm that you recieved and understood *this* message
+I Spell... |About to spell the following word(s)
+Stand By   |I will reestablish communication soon
+Disregard  |Ignore
+Confirm... |Verify that the following information is correct
+Correction |An error was made and the following is the correct information
+In figures |Single-digit numbers
+Spell      |Spell out using NATO alphabet
+
+
+
+Spelling
+-----------------------------------------------------------------------------
+
+.|Pronunciation
+-|-----
+0|Zero
+1|One
+2|Two
+3|Tree
+4|Fo-ar
+5|Fife
+6|Six
+7|Seven
+8|Eight
+9|Niner
+.|Decimal
+$|Dollars
+A|Alfa
+B|Bravo
+C|Charlie
+D|Delta
+E|Echo
+F|Foxtrot
+G|Golf
+H|Hotel
+I|India
+J|Juliette
+K|Keelo
+L|Leema
+M|Mike
+N|November
+O|Oscar
+P|Pa-pa
+Q|Quebec
+R|Romeo
+S|Sierra
+T|Tango
+U|Uniform
+V|Victor
+W|Whiskey
+X|X-Ray
+Y|Yankee
+Z|Zulu
+
+All numbers are pronounced as a sequence of single-digit numbers.
+
+Date
+-----------------------------------------------------------------------------
+
+The format for a date and time is:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DDHHMM[optional timezone] month YYYY
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The format for a time is:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+HHMM[optional timezone]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A 24-hour clock is always used.
+
+If unspecified or `J` (Juliette), the time zone is local time. Otherwise, the
+[ACP Standard](https://en.wikipedia.org/wiki/List_of_military_time_zones) is used as a specifier,
+although only `Z` (Zulu) is common in civilian use:
+
+Letter|Zone
+---|--------
+`A`|UTC + 1
+`J`|Local
+`Z`|UTC + 0
+
+
+
+Channels
+=============================================================================
+
+Channel usage varies with location. Check your regional
+regulations. Some common channels are:
+
+
+Channel    | Use
+-----------|------------------------------
+06         | Ship-to-ship working channel; ship-to-air in Canada
+09         | US ship-to-shore working channel and hailing; ship-to-air calling in Canada
+11         | Vessel traffic regulating
+12         | Vessel traffic regulating
+13         | Ship-to-ship "Bridge-to-bridge" navigation traffic
+14         | SF Bay Pilotage; BC Coast port and pilot operations
+16         | Emergency and hailing. Monitor this by default
+65         | Search and Rescue and Antipollution on the Great Lakes 
+68         | Recreational vessel
+69         | Recreational vessel
+70         | Reserved for DSC
+71         | Recreational vessel
+72         | Recreational vessel ship-to-ship
+78         | Recreational vessel
+
+
+
+
+<style class="fallback">body{visibility:hidden}</style>
+<script>markdeepOptions={tocStyle:'short'}</script>
+<script src="../ce-blog.js"> </script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
