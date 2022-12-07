@@ -1,7 +1,19 @@
               <meta charset="utf-8" emacsmode="-*-markdown-*-">
                          **Marine VHF Guide**
-                         Morgan McGuire
-                          2022-12-05
+                           Morgan McGuire
+                            2022-12-05
+
+Operating a VHF in Canadian waters requires a
+[Restricted Operator Certificate-Maritime (ROC-M)](https://www.ic.gc.ca/eic/site/015.nsf/eng/h_00005.html),
+which is issued by
+[Canadian Power and Sail Squadrons](https://www.cps-ecp.ca/).
+Operating includes even just turning the radio on. The ROC-M is
+restricted to operation on water for non-commercial vessels. 
+
+In Canada, a VHF station license is _not_ required for a radio mounted in a
+vessel. [It is required for a Canadian vessel in US waters](https://www.sailing.ca/rocm/#). That 
+station license is issued by
+[Innovation Canada](https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en/learn-more/key-documents/forms/ic-3020-application-maritime-mobile-radio-station-licence).
 
 The receiver of a call is the *controlling* station, except for distress
 (mayday) calls, where the vessel in distress is the controlling station.
@@ -18,10 +30,16 @@ A DSC *alert* may also be issued before the voice call.
 
 Each voice transmission begins with a *signal*, such as "Mayday".
 
+References:
+- https://www.ccg-gcc.gc.ca/publications/mcts-sctm/ramn-arnm/part4-eng.html
+- https://ised-isde.canada.ca/site/spectrum-management-telecommunications/en/official-publications/information/radiocom-information-circulars-ric/ric-21-study-guide-restricted-operator-certificate-aeronautical-qualification-sf09802
+- https://www.dco.uscg.mil/Portals/9/DCO%20Documents/5p/CG-5PC/CG-CVC/CVC3/references/Emergency_Radio_Procedures.pdf
+
 
 Safety (Sécurité)
 -----------------------------------------------------------------------------
 
+Safety messages are usually sent by the Coast Guard or large ships.
 Broadcast the call on channel 16:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,14 +49,15 @@ This is (vessel), (vessel), (vessel)
 Call sign (call sign)
 MMSI number (number)
 
-My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+My position is (latitude),  (longitude), (+ location relative to some landmark)
 
-I will broadcast a navigation warning about (summary) on channel 06 (or include here if short).
+I will broadcast a navigation warning about (summary) on channel (working channel) (or include here if short).
 
 out
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Then broadcast on the working channel, such as 06
+
+Then, broadcast the message on the working channel, such as 06:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Sécurité, sécurité, sécurité
@@ -47,12 +66,18 @@ This is (vessel), (vessel), (vessel)
 Call sign (call sign)
 MMSI number (number)
 
-My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+My position is (latitude), (longitude), (+ location relative to some landmark)
 
 (nature of the navigation hazard)
 
 over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The message can be combined with the call in a single transmission
+when short.
+
+It is unusual to send a DSC alert for a safety
+message. That is only done when a large area is affected.
 
 
 
@@ -65,25 +90,25 @@ On channel 16:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Pan-pan, pan-pan, pan-pan
+All stations, all stations, all stations
 This is (vessel), (vessel), (vessel)
 Call sign (call sign)
 MMSI number (number)
 
-My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+My position is (latitude), (longitude), (+ location relative to some landmark)
 
 (nature of the urgency)
 
 I have (n) persons aboard
 
-(relevant identifying details for the boat)
-
-(course and speed)
+(relevant identifying details for the boat, course and speed, etc.)
 
 over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Continue monitoring for three minutes after receiving an urgency call.
+Continue monitoring for three minutes after _receiving_ an urgency call.
+
 
 
 
@@ -100,7 +125,9 @@ MMSI number (number)
 
 
 Mayday
-My position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+My position is (latitude), (longitude), (+ location relative to some landmark)
+
+(nature of the distress)
 
 (the assistance that is required)
 
@@ -119,8 +146,10 @@ Every following message should begin with `Mayday (vessel)`.
 Respond to a mayday call with:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Mayday (other vessel)
-this is (vessel), (vessel), (vessel)
+Mayday 
+(distressed vessel), (distressed vessel), (distressed vessel)
+This is (vessel), (vessel), (vessel)
+
 Received mayday
 
 ...
@@ -128,6 +157,31 @@ Received mayday
 Over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+If other traffic is not respecting the mayday and still transmitting,
+the controlling station can explicitly impose silence with:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
+(offending transmitter)
+This is (vessel)
+
+Silence Mayday ("Seelonce mayday")
+
+Out
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+If other traffic is not respecting the mayday and still transmitting,
+a third party station can explicitly impose silence with:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
+(offending transmitter)
+This is (vessel)
+
+Silence distress ("Seelonce distress")
+
+Out
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 End mayday with:
@@ -149,21 +203,21 @@ On channel 16:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Mayday relay, mayday relay, mayday relay
+All stations, all stations, all stations
 This is (vessel), (vessel), (vessel)
 Call sign (call sign)
 MMSI number (number)
 
 
 Mayday received from (vessel) at (time/date):
-Their position is (latitude) N, (longitude) W, (+ location relative to some landmark)
+Their position is (latitude), (longitude), (+ location relative to some landmark)
 
+(the nature of their distress)
 (the assistance that is required)
 
 They have (n) persons aboard
 
-(relevant identifying details for the boat)
-
-(course and speed)
+(relevant identifying details for the boat, course and speed, etc.)
 
 over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,12 +236,13 @@ On channel (hail channel)
 Over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 Acknowledge call:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 (caller)
 This is (receiver)
 
-Go to working channel (channel, usually 68)
+Go to working channel (channel, e.g. 68)
 
 Over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,7 +250,9 @@ Over
 Messages:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ none
 (other vessel) this is (my vessel)
+
 ...
+
 Over
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -205,10 +262,11 @@ End:
 (other vessel) this is (my vessel)
 ...
 
-I will monitor (hailing channel)
+Returning to channel 16
 
 Out
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 
 Vocabulary
@@ -227,6 +285,7 @@ Break      |I am splitting my message and will resume momentarily
 Acknowledge|Confirm that you recieved and understood *this* message
 I Spell... |About to spell the following word(s)
 Stand By   |I will reestablish communication soon
+Standing By|I await your reestablishing communication
 Disregard  |Ignore
 Confirm... |Verify that the following information is correct
 Correction |An error was made and the following is the correct information
@@ -296,16 +355,24 @@ The format for a time is:
 HHMM[optional timezone]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A 24-hour clock is always used.
+A 24-hour clock is always used. The day begins at `0000`, noon is
+`1200`, and the last minute before midnight is `2359`.
 
-If unspecified or `J` (Juliette), the time zone is local time. Otherwise, the
-[ACP Standard](https://en.wikipedia.org/wiki/List_of_military_time_zones) is used as a specifier,
-although only `Z` (Zulu) is common in civilian use:
+If unspecified or `J` (Juliette), then the time zone is local
+time. Otherwise, the
+[ACP Standard](https://en.wikipedia.org/wiki/List_of_military_time_zones)
+is used as a specifier, although only `Z` (Zulu) is common in civilian use:
 
 Letter|Zone
 ---|--------
 `A`|UTC + 1
+`B`|UTC + 2
+`C`|UTC + 3
 `J`|Local
+`Q`|UTC - 4 = EDT (summer)
+`R`|UTC - 5 = EST (winter)
+`T`|UTC - 7 = PDT (summer)
+`U`|UTC - 8 = PST (winter)
 `Z`|UTC + 0
 
 
