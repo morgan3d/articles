@@ -5,12 +5,26 @@ function addBlogRunner() {
     
     var header = `
 <style>
+@font-face {
+  font-family: 'header';
+  src: url('${baseURL}/Oxygen-Regular.ttf');
+}
+
 em.asterisk { font-style: normal; font-weight: bold; }
-h1 {margin-top:50px; padding-bottom:6px; border-bottom: 1px solid #555}
 body {max-width: 800px !important; padding-top: 60px}
+.md div.title {text-align: left; font-size: 35px}
+.md div.subtitle {text-align: left; font-style: italic}
+.md div.title, .md h1, .md .nonumberh1, .md h2, .md .nonumberh2, .md h3, .md h4, .md h5 {font-family: header}
+.md h1, .md .nonumberh1 {font-size: 30px}
+.md h2, .md .nonumberh2 {font-size: 26px}
+.md h3, .md .nonumberh3 {font-size: 24px}
+.md h4, .md .nonumberh4 {font-size: 22px}
+.md {line-height: 175%; color: #333; font-family: Georgia}
+.md a {font-family: Georgia}
 </style>
 
-<span class="md"><a style="text-decoration:none" href="${baseURL}/index.html"><div style="position: absolute; left: 0px; top: 0px; width:100%; height: 50px; border-bottom:1px solid; background: url('${baseURL}/header.jpg'); text-shadow: #2EB3AA 0px 0px 6px; background-size: cover; background-repeat: no-repeat repeat; font-size: 40px; padding-top: 22px; padding-left: 60px; color: #FFF">Notes on Sailing</div></a></span>`;
+<span class="md"><a style="text-decoration:none" href="${baseURL}/index.html"><div style="position: absolute; left: 0px; top: 0px; width:100%; height: 50px; background: url('${baseURL}/header.jpg'); text-shadow: #2EB3AA 0px 0px 6px; background-size: cover; background-repeat: repeat no-repeat"></div></a></span>
+<span class="md"><a style="text-decoration:none" href="${baseURL}/index.html"><div style="position: absolute; top: 0px; height: 50px; text-shadow: #963 0px 0px 4px; background-size: cover; background-repeat: no-repeat repeat; font-size: 40px; padding-top: 10px; color: #FFF"><b>Notes on Sailing</b></div></a></span>`;
     
     var footer = `<div style="border-top: solid 1px; padding-top:10px" class="md">
 <table><tr valign=top><td>
