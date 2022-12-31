@@ -4,6 +4,7 @@ function addBlogRunner() {
     var baseURL = location.href.replace(/\/sailing\/.*/, '/sailing');
     
     var header = `
+<link rel="icon" type="image/x-icon" href="${baseURL}/compass-rose.png">
 <style>
 @font-face {
   font-family: 'header';
@@ -24,7 +25,7 @@ body {max-width: 800px !important; padding-top: 60px}
 </style>
 
 <span class="md"><a style="text-decoration:none" href="${baseURL}/index.html"><div style="position: absolute; left: 0px; top: 0px; width:100%; height: 60px; background: url('${baseURL}/header.jpg'); text-shadow: #2EB3AA 0px 0px 6px; background-size: cover; background-repeat: repeat no-repeat"></div></a></span>
-<span class="md"><a style="text-decoration:none" href="${baseURL}/index.html"><div style=" filter: drop-shadow(0px 1px 3px #333); position: absolute; top: 0px; height: 60px; background-size: cover; background-repeat: no-repeat repeat; font-size: 40px; padding-top: 13px; color: #FFF"><img style="margin-left: -55px; top: 5px; position: absolute" width=50 height=50 src="${baseURL}/fat-compass-rose.png"><b>Notes on Sailing</b></div></a></span>`;
+<span class="md"><a style="text-decoration:none" href="${baseURL}/index.html"><div style=" filter: drop-shadow(0px 1px 3px #333); position: absolute; top: 0px; height: 60px; background-size: cover; background-repeat: no-repeat repeat; font-size: 40px; padding-top: 13px; color: #FFF"><img style="margin-left: -57px; top: 5px; position: absolute" width=50 height=50 src="${baseURL}/fat-compass-rose.png"><b style="margin-left:-2px">Notes on Sailing</b></div></a></span>`;
     
     var footer = `<div style="border-top: solid 1px; padding-top:10px" class="md">
 <table><tr valign=top><td>
