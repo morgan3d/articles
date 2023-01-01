@@ -18,6 +18,7 @@ excepting portions credited to other sources. <a rel="license" href="http://crea
 </td></tr></table>
 </div>
 
+<link rel="icon" sizes="32x32" type="image/x-icon" href="${baseURL}/compass-rose-32x32.ico">
 <link rel="shortcut icon" type="image/png" href="${baseURL}/compass-rose.png">
 <link rel="icon" sizes="32x32" type="image/png" href="${baseURL}/compass-rose-32x32.png">
 <style>
