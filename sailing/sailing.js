@@ -18,7 +18,7 @@ excepting portions credited to other sources. <a rel="license" href="http://crea
 </td></tr></table>
 </div>
 
-<link rel="icon" type="image/x-icon" href="${baseURL}/compass-rose.png">
+<link rel="shortcut icon" type="image/png" href="${baseURL}/compass-rose.png">
 <style>
 @font-face {
   font-family: 'header';
