@@ -2,7 +2,7 @@
 
 function addBlogRunner() {
     var baseURL = location.href.replace(/\/sailing\/.*/, '/sailing');
-    
+        
     var header = `
 <link rel="icon" type="image/x-icon" href="${baseURL}/compass-rose.png">
 <style>
