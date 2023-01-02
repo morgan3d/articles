@@ -65,39 +65,38 @@ The key observations for this normal case of sail operation are
 summarized below to prepare you with the big picture. The rest of the
 article explains these in detail.
 
-1. The apparent wind direction over the sail relative to the
-  orientation of the boat changes as the boat itself accelerates,
-  and does not match the true wind direction when the boat is at rest.
-2. Sailboats moving upwind at less than about 90 degrees to the wind do
-  not move just in the direction they are pointing. They also slide
-  sideways as well.
-3. The sail produces lift because of wind motion with unequal pressure
+1. As the boat speeds up, the apparent wind direction rotates
+  towards the bow and no longer matchs the true wind direction 
+  from when the boat was at rest.
+2. The sail produces lift because of wind motion with unequal pressure
   on each side of the curved sail. This lift force is generally
   oriented between forwards and sideways.
+3. Sailboats do not move just in the direction they are pointing. They
+  also slide sideways as well.
 4. The keel (and rudder, and hull) also produce lift that cancels most
   of the sideways motion from the sail lift. This lift occurs because
   of water motion over the curved shape with unequal pressure due to
   the sideways sliding motion of the boat. This lift, and some
   additional sideways drag from the underwater parts cancel most of
-  the sideways component of the sail's lift and prevent the boat from
-  sliding _too_ much sideways.
+  the sideways component of the sail's lift. They prevent the boat from
+  sliding too much sideways.
 5. The above and below water lift forces are away from the center of
   mass, so also create roll torque that heels the boat over.
 6. The ballast of the crew, in the hull of the boat, and in the keel
-  create an opposing roll torque that provides righting moment and keeps
+  create an opposing roll torque that provides righting moment. That keeps
   the boat from capsizing.
 7. The buoyancy of the hull opposes the downward portion of the ballast force,
   so that the boat doesn't sink.
 8. The rudder creates unequal drag at the back of the boat, and turns
   the boat by slowing it on one side.
-9. The force on the mainsail acts behind the boat's center of mass, so
-  also creates some yaw torque. This rotates the boat towards the wind
-  direction.
+9. The force on the mainsail acts behind the boat's center of mass. So, it
+   also creates some yaw torque. This torque rotates the boat towards the wind
+   direction.
 10. When the boat heels, the hull becomes asymmetric underwater and makes
   the boat further turn towards the wind direction.
 11. A headsail not only creates increased force for forward acceleration
-  but also applies force its in front of the mast. This applies a
-  reverse yaw torque that helps the boat avoid turning _too_ far into
+  but also applies that force in front of the mast. This applies a
+  reverse yaw torque. That helps the boat to resisit turning into
   the wind. Without a headsail, a sailboat must use more rudder and
   create more slowing drag in order to avoid automatically turning up
   into the wind and stopping.
@@ -106,15 +105,52 @@ article explains these in detail.
 Lifting Bodies
 ===================================================================
 
-1. Example of an airplane wing. What actually causes the low pressure and
-   lift force is complicated
-   any any explanation that you are familiar with is [probably
-   incomplete](https://www.scientificamerican.com/article/no-one-can-explain-why-planes-stay-in-the-air/).
-   But it is well known to physicists and engineers that there is faster moving
-   low pressure air on the outside and that a lift force is generated.
-2. Now think of this as a top view of a sail!
-3. The same thing is happening under the water with the keel
+Airfoils and Hydrofoils
+-------------------------------------------------------------------
 
+You may be familiar with the depiction of an airplane wing with
+streamlines flowing over it. The angle of attack and teardrop shape
+yield low pressure fast moving air on the top, incoming force on the
+bottom and a lift force directed upwards. 
+
+![Side view of an airplane wing and top view of a boat sail.](wing.svg width=750px)
+
+The same lift force and airflow phenomena occur on a boat's sail, which
+also is an airfoil.
+Moving true wind rather than the propeller pulling an airplane forward
+creates the flow in this case, which is why the boat needs no on-board
+power source.
+
+Furthermore, the boat's keel, hull, and rudder are hydrofoils. They
+experience similar flow of water to that of air over the sail. This
+generates additional lift forces. The water lift forces are on the
+opposide side of the sail's lift and in a direction perpendicular to
+the boat's heading.
+
+The combined air and water lift forces they yield a net force forward
+and slightly to the sail's side of the boat. The sailboat thus
+accelerates forward, while also slipping sideways slightly.
+
+Two interesting asides before continuing to consider the other forces
+acting on a sailboat.
+First, the exact principle of how the self-reinforcing low
+pressure and lift emerge
+[is complex and not satisfactorily understood](https://www.scientificamerican.com/article/no-one-can-explain-why-planes-stay-in-the-air/),
+although it is modeled nearly perfectly by mathematics and highly optimized 
+through simulation in today's airplane and sailboat designs.
+
+Second, while the keels and rudders are collectively called "*foils*" (most commonly 
+by dinghy sailors), a "foiling" sailboat specifically refers to one such as
+[foiling Moths](https://youtu.be/z2sT8hLoTmQ?t=54) or
+[AC catamaran](https://youtu.be/wbJBk7MlG0k?t=420) that flies over the
+water. These boats have "foils" that provide not just horizontal lift but
+also airplane-like vertical lift from additional wings under the
+water. All of these uses of the term "foil" are consistent,
+although confusing because they change with context. 
+
+
+More Forces
+-------------------------------------------------------------------------
 
 ![](forces.svg width=100%)
 
@@ -410,7 +446,7 @@ question is how square rigged ships sailed by the British and
 southern Europeans worked during the age of sail. In fact, they
 indeed had terrible upwind performance. 
 
-Square rigged ships were developed to exploit trade winds. They sought
+![ ](square.jpg width=300px) Square rigged ships were developed to exploit trade winds. They sought
 to sail downwind most of the time. They could sail the Atlantic in 
 a clockwise direction by following the current and prevailing winds,
 sailing west at low lattitudes and east at high lattitudes.
@@ -486,7 +522,8 @@ forces for controling direction. Rudders provide direct
 control over the direction of the boat. Keels are necessary for
 monohulls to travel upwind. Multihull boats can move
 upwind without them due to the force from their hulls, but
-benefit for upwind performance. 
+benefit for upwind performance. Windsurfers do usually have small fins,
+but the edge of the flat hull also digs in and acts as a keel.
 
 A *daggerboard* is a keel whose underwater area can be adjusted by
 moving it vertically through the hull to reduce its force when
@@ -846,7 +883,7 @@ Running backstays
 
 
 Mechanical Advantage
-------------------------------------------------------------
+---------------------------------------------------------------
 
 A *winch* is a drum that a line is wrapped around to make it easier to
 tension. *Dress* a winch by running the line _clockwise_ around it at
