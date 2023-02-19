@@ -1,6 +1,6 @@
               <meta charset="utf-8" emacsmode="-*-markdown-*-">
-                     **Morgan's New RPi Setup**
-                          2021-12-24
+                      **Morgan's New RPi Setup**
+              First published 2021-12-24; Last updated 2023-02-19
 
 I use the low-cost system-on-a-chip
 [Raspberry Pi](https://www.raspberrypi.org/) computers for many
@@ -73,7 +73,14 @@ sudo hostname $NEW_HOSTNAME
 sudo apt --yes install emacs
 echo "'(\"melpa-stable\" . \"https://stable.melpa.org/packages/\")) (package-initialize)" > ~/.emacs
 emacs --batch --eval "(package-install 'markdown-mode)"
-	      
+
+##################################################
+# Game development tools
+sudo apt --yes install krita
+sudo apt --yes install pngcrush
+sudo apt --yes install tiled
+sudo apt --yes install audacity
+
 ##################################################
 # Reboot!
 sudo reboot
