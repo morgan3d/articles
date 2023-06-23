@@ -1,0 +1,208 @@
+           <meta charset="utf-8" emacsmode="-*- markdown -*-">
+               **FCB1010 as a DAW MIDI Controller**
+                           2023-06-22
+
+![ ](fcb1010.png)
+
+The [Behringer FCB1010](https://amzn.to/42WnlWI) is a very robust,
+high functionality MIDI foot controller and has long been the best
+option costing less than US$200 for that role. It effectively provides
+100 configurable buttons and two expression pedals that can be mapped
+to any function in a DAW or synth.
+
+However, it is also an ancient and confusing device by modern
+technology standards. It has a very old school programming mechanism
+(which you can fortunately ignore for DAWs), terminology that is very
+confusing when employed as a generic MIDI controller, and some strange
+limitations because of its original use.
+
+If you find working with older hardware entertaining and like how much
+value you'll get for the price, then that is part of the charm of this
+device. If you do not, then buy a modern and more expensive foot
+controller to save yourself the pain. I've never used them, but the
+Singular Sound MIDI Maestro and Yamaha MFC10 both look great. The
+Roland FC-300 looks like a more expensive version of the FCB1010 with
+fewer explicit buttons.
+
+I wrote this manual to save you the hours of reading multiple manuals,
+watching videos, installing software, and experimenting with the
+device that it took me to understand and configure it.
+
+
+Initial Setup
+=================================================================
+
+1. Open the FCB1010 by removing the 10 screws around the border and
+   the six in the center (the other three can be left).
+2. Check the label on the firmware chip. Version 2.5 is the latest
+   as of June 2023. This version shipped in 2017, but some new units
+   still have out of date and buggy firmware. If you bought a used
+   unit, then it may have unsupported third party replacement chips as well.
+3. If you do not have the latest firmware, buy the latest chip (about
+   $5) and carefully replace the one in the device.
+4. If not using the with a 120V North American plug, check the fuse
+   position as described in the manual.
+5. Buy a MIDI-to-USB adapter, because FCB1010 doesn't have one. I use
+   [FORE MIDI-to-USB adapter](https://amzn.to/3C96dlI), which works as
+   expected except that the MIDI IN male plug connects to the MIDI OUT
+   port on the device, and vice versa.
+6. If you bought a used device, reset to the factory default configuration by
+   booting the device with buttons 1 and 6 both held and continuing to hold
+   them until the countdown LED timer hits zero.
+7. Calibrate the expression pedals by:
+   1. Boot the device with buttons 1 and 5 held. The number
+      LEDs will display FE and the Value 1 LED and Pedal A LED
+      will be lit.
+   2. Move Pedal A to the lowest value. Press the Up button. The Value
+      1 LED will turn off and the Value 2 LED will light.
+   3. Move Pedal A to the highest value. Press the Up button. The Pedal A LED and Value 2 
+      LEDs will turn off. The Pedal B and Value 1 LEDs will light.
+   4. Move Pedal B to the lowest value. Press the Up button. The Value
+      1 LED will turn off and the Value 2 LED will light.
+   5. Move Pedal A to the highest value. Press the Up button. The unit
+      will reboot.
+
+
+Mental Model
+=================================================================
+
+Today the FCB1010 is often used as a generic MIDI foot controller for
+triggering synth or DAW functions. However, to make sense of it, you
+have to think about its original intended use 20 years ago.
+
+Obsolete Preset Paradigm
+-----------------------------------------------------------------
+
+The FCB1010 was designed as a way to control Behringer guitar
+amplifiers and effect units that have two binary switch inputs, two
+expression pedal MIDI control change inputs, and multiple modes
+affected by MIDI program change messages.
+
+For example, you might have a distortion effect device, a reverb
+device, and the volume of an amplifier that you want to simultaneously
+change to new values between the verse, chorus, and solo sections of a
+song. Each of those song parts is one "preset" configuration for your
+devices.
+
+The FCB1010 will change all of the devices simultaneously when the
+corresponding preset is selected. This means that you do not have to
+change multiple settings on multiple devices manually as you move through each
+part of the song.
+
+In this context, the function of the FCB1010 is for selecting one of
+100 preset configurations for controlling these other devices. Each
+preset contains settings for the state of the two switches, Program
+Change messages to send to up to five other devices, and expression
+pedal ranges to be used within that preset configuration.
+
+To make the presets easily addressable from a relatively small number
+of buttons, they are organized into 10 banks of 10 presets.
+
+From this perspective, it is also clear why Behringer has never
+updated the FCB1010 with a USB port. It is designed to work with
+actual traditional MIDI devices and guitar-cord footswitch inputs. A
+USB port would just increase the cost but not help with those devices,
+which themselves lack USB ports.
+
+
+Modern DAW Paradigm
+---------------------------------------------------------------
+
+Because it is highly configurable, the FCB1010 can be used far beyond
+its original presumable intended use. However, the terminology and
+display LEDs are potentially confusing because they are still tied
+to the old switching preset model.
+
+The FCB1010 has 10 *banks*. Within each bank, there are 10 macros
+called *presets* that are triggered by the buttons, and 2 *expression
+pedals* that send Control Change messages.
+
+A *preset* is a sequence of MIDI messages sent when a button is
+pressed. By default, the buttons send one Program Change message
+each. They can be configured for sending individual Program Change
+messages to 5 devices, plus two control change messages, plus one note
+message, plus change the binary status of each of two external switch
+values, plus changing the range and controller number of the expression
+pedals.
+
+It can be used with a DAW by entering MIDI mapping mode on the DAW,
+selecting a bank, and then pressing the button for a desired command.
+
+Because it was not designed as a general purpose controller, one
+limitation of the FCB1010 is that only one button can be pressed at
+once. Another artifact of its origin is that the last button pressed
+will remain lit, and will affect the functioning of the expression
+pedals.
+
+The FCB1010 stores the preset configurations in non-volatile memory, so
+that they persist when power is removed.
+
+There are two ways to activate a preset:
+
+2. *Direct Select* Off: Scroll through banks with the up/down
+   buttons. The number LEDs shows the bank number as 00
+   through 09. The Direct Select LED is not lit. When a preset button
+   is pressed, its LED lights up and all other preset LEDs go dark.
+1. *Direct Select* On: Every entry is two single-digit button
+   presses. The first press is the number of the bank, and the second
+   is the preset. The number LEDs show the bank and preset numbers as
+   00 through 99. The Direct Select LED is lit.
+
+The initial mode is Direct Select Off. This is indicated by the Direct Select
+LED not being illuminated. Toggle between these modes by:
+
+1. Boot the device with the Down button held
+2. Release Down
+3. Press 10
+4. Hold Down for 3 seconds
+
+This setting persists when powered off.
+
+
+Configuring
+==========================================================================
+
+The hard way to configure the FCB1010 is to navigate a set of
+on-device menus by a complex series of taps on foot buttons. 
+The device has a menu system described by flow charts 
+as described in the
+[PDF manual](https://mediadl.musictribe.com/media/PLM/data/docs/P0089/FCB1010_P0089_M_EN.pdf),
+which is _not_ the manual that ships with the device.
+Holding the Down button for a few seconds enters and exits the menu.
+[This video](https://www.youtube.com/watch?v=SYNND5nMWhc) explains the
+programming as well.
+
+The easy way to configure it is by using 3rd party software that sends SysEx
+messages. The
+[Mountain Utilities FCB1010 Manager](https://mountainutilities.eu/fcb1010)
+is a frequently updated free utility for programming the FCB1010
+specficially that runs on both macOS and Windows. It has its own
+[PDF manual](https://mountainutilities.eu/system/files/download/fcb1010-manager-manual-2.2.4.pdf).
+[This video](https://www.youtube.com/watch?v=MMJQ-AHRSMs) explains how
+to use the Manager program.
+
+
+Initial Configuration
+=================================================================
+
+- Direct Select = off
+- For all banks:
+  - Pressing a button sends Program Change, 10 x (bank number) + (button number - 1) = 0 through 99
+  - For all presets:
+    - Pedal A = Control Change, channel 0, controller 27, value 0 through 127
+    - Pedal B = Control Change, channel 0, controller 7, value 0 through 127
+
+
+<style class="fallback">body{visibility:hidden}</style>
+<style>
+body, .md a { font-family: Arial }
+.md pre.tilde {font-size: 110%; background: #F8F8F0}
+.md h1:before, .md h2:before, .md h3:before, .md h4:before { content: none; }
+.md h1 {border-bottom: 2px solid #000}
+.md h2 {font-size: 110%; border-bottom: none}
+</style>
+<script>markdeepOptions={tocStyle:'short'}</script>
+<script src="../ce-blog.js"> </script>
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?"></script>
+
+
