@@ -191,10 +191,8 @@ is a frequently updated free utility for programming the FCB1010
 specficially that runs on both macOS and Windows. It has its own
 [PDF manual](https://mountainutilities.eu/system/files/download/fcb1010-manager-manual-2.2.4.pdf).
 [This video](https://www.youtube.com/watch?v=MMJQ-AHRSMs) explains how
-to use the Manager program.
-
-If using Ableton, simply use a manager to map the buttons 
-1 = CC22 through 9 = CC31 and 10 = CC84, or to Note values.
+to use the Manager program, or you can use my standard configuration
+from the Ableton via Mountain section.
 
 If you don't want to use SysEx or are working without a computer,
 then you can configure the hard way. That is to navigate a set of
@@ -209,6 +207,59 @@ programming as well.
 [Another video](https://www.youtube.com/watch?v=wO3XD_HU-tE) walks
 through specifically configuring FCB1010 for Ableton.
 
+
+Ableton via Mountain
+=================================================================
+To configure the FCB1010 via the 
+[Mountain Utilities FCB1010 Manager](https://mountainutilities.eu/fcb1010)
+for [Ableton Live](https://www.ableton.com/en/live/):
+
+1. Install the [Manager](https://mountainutilities.eu/fcb1010)
+2. Close all other MIDI programs
+3. Power off the FCB1010
+4. *Disconnect the MIDI In* port _on the FCB1010_ (not the device's out port that goes
+   to your adapter's MIDI In)
+5. Run the Manager
+6. Press the red MIDI port icon on the Manager. It will bring up a dialog
+       explaining the following steps.
+7. Hold down the Down pedal and power up the FCB1010 with it held down
+8. After the green Direct Select LED lights up, release the Down button
+9. Tap the Down button. The green Config LED will now light up
+10. Tap the 6 pedal
+11. Press OK on the dialog that appears. You will now be looking at
+   the current state of your FCB1010 in the Manager
+12. In the Manager, press the Show Presets grid icon, and then map the buttons as shown in the table below using the editor, or just load them from my [config file](fcb1010-ableton.syx download).
+13. Press the green MIDI icon to send this configuration to the device, which
+   will then tell you to complete the following steps in a dialog.
+14. Connect the MIDI In port to your cable (this is what you
+    previously disconnected)
+15. Tap the 7 pedal
+16. Look at the green Config LED on the device and
+    press OK on the dialog in the Manager
+16. Wait for a while. You will see the Config LED go out and then 
+    come back on.
+17. Press and hold the Down pedal for 3 seconds to save. The
+    Red LED numbers will count down and then show 00 when done. 
+    You have then now commited the new configuration.
+18. You can now power off the FCB and disconnect the MIDI In
+    port, which you don't need for normal operation.
+
+   Preset | SW 1 | SW 2 | PC 1 | PC 2 | PC 3 | CNT 1 | Val 1 | CNT 2 | Val 2 | PC 5 | NOTE | Exp A | Min A | Max A | EXP B | Min B | Max B
+   -------|------|------|------|------|------|-------|-------|-------|-------|------|------|-------|-------|-------|-------|-------|-------
+   0:1    |      |      |      |      |      | 24    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:2    |      |      |      |      |      | 25    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:3    |      |      |      |      |      | 26    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:4    |      |      |      |      |      | 27    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:5    |      |      |      |      |      | 28    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:6    |      |      |      |      |      | 29    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:7    |      |      |      |      |      | 30    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:8    |      |      |      |      |      | 31    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:9    |      |      |      |      |      | 84    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+   0:10   |      |      |      |      |      | 85    | 127   |       |       |      |      |22     |0      |127    | 23    | 0     | 127
+
+
+You should now be able to use the FCB1010 in Ableton MIDI mapping mode
+in the same way as any other device.
 
 Initial Configuration
 =================================================================
