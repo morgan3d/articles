@@ -1,6 +1,6 @@
            <meta charset="utf-8" emacsmode="-*- markdown -*-">
-               **FCB1010 as a DAW MIDI Controller**
-                           2023-06-22
+                **FCB1010 as a DAW MIDI Controller**
+                Published 2023-06-22; Updated 2023-07-08
 
 ![ ](fcb1010.png)
 
@@ -27,7 +27,6 @@ fewer explicit buttons.
 I wrote this manual to save you the hours of reading multiple manuals,
 watching videos, installing software, and experimenting with the
 device that it took me to understand and configure it.
-
 
 Initial Setup
 =================================================================
@@ -132,10 +131,12 @@ Because it was not designed as a general purpose controller, one
 limitation of the FCB1010 is that only one button can be pressed at
 once. Another artifact of its origin is that the last button pressed
 will remain lit, and will affect the functioning of the expression
-pedals.
+pedals. There are several alternative firmware chips that you 
+can buy to remove these traditional limitations. See https://www.fcb1010.eu
+for information on the most popular ones.
 
-The FCB1010 stores the preset configurations in non-volatile memory, so
-that they persist when power is removed.
+The FCB1010 stores the preset configurations in non-volatile memory,
+so that they persist when power is removed.
 
 There are two ways to activate a preset:
 
@@ -162,15 +163,12 @@ This setting persists when powered off.
 Configuring
 ==========================================================================
 
-The hard way to configure the FCB1010 is to navigate a set of
-on-device menus by a complex series of taps on foot buttons. 
-The device has a menu system described by flow charts 
-as described in the
-[PDF manual](https://mediadl.musictribe.com/media/PLM/data/docs/P0089/FCB1010_P0089_M_EN.pdf),
-which is _not_ the manual that ships with the device.
-Holding the Down button for a few seconds enters and exits the menu.
-[This video](https://www.youtube.com/watch?v=SYNND5nMWhc) explains the
-programming as well.
+You do not need to configure the FCB1010 to work with a DAW or synth
+that has MIDI learning...unless your DAW, like Ableton, does not accept
+the generic Program Change messages that FCB1010 sends out of the box
+and instead needs Control Change and Note messages.
+You would also need to configure it if working
+with a device that expects _specific_ MIDI messages as inputs.
 
 The easy way to configure it is by using 3rd party software that sends SysEx
 messages. The
@@ -180,6 +178,22 @@ specficially that runs on both macOS and Windows. It has its own
 [PDF manual](https://mountainutilities.eu/system/files/download/fcb1010-manager-manual-2.2.4.pdf).
 [This video](https://www.youtube.com/watch?v=MMJQ-AHRSMs) explains how
 to use the Manager program.
+
+If using Ableton, simply use a manager to map the buttons 
+1 = CC22 through 9 = CC31 and 10 = CC84, or to Note values.
+
+If you don't want to use SysEx or are working without a computer,
+then you can configure the hard way. That is to navigate a set of
+on-device menus by a complex series of taps on foot buttons. 
+The FCB1010 has a menu system described by flow charts 
+as described in the
+[PDF manual](https://mediadl.musictribe.com/media/PLM/data/docs/P0089/FCB1010_P0089_M_EN.pdf),
+which is _not_ the manual that ships with the device.
+Holding the Down button for a few seconds enters and exits the menu.
+[This video](https://www.youtube.com/watch?v=SYNND5nMWhc) explains the
+programming as well.
+[Another video](https://www.youtube.com/watch?v=wO3XD_HU-tE) walks
+through specifically configuring FCB1010 for Ableton.
 
 
 Initial Configuration
