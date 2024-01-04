@@ -5,7 +5,7 @@ function addBlogRunner() {
 <table><tr valign=top><td><img src="https://casual-effects.com/morgan/headshots/mcguire-tiny.jpg" style="max-width: none; width: 128px; height: 128px; border:1px solid #888"></td><td width="30px"> </td><td>
 <i style="font-size:95%">
 This is a personal blog article by <a href="https://casual-effects.com">Morgan
-McGuire</a> [<a href="https://twitter.com/CasualEffects">@CasualEffects</a>]. Morgan is the Chief Scientist at Roblox and holds faculty appointments at
+McGuire</a>. Morgan is the Chief Scientist at Roblox and holds faculty appointments at
 the University of Waterloo and McGill University.
 </i>
 </td></tr></table>
