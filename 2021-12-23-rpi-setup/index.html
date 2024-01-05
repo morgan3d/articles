@@ -32,11 +32,34 @@ NAME="**Your Name**"
 EMAIL=**your@e.mail**
 
 ##################################################
+# Change hostname
+sudo hostname $NEW_HOSTNAME
+
+##################################################
+# Enable VNC
+
+sudo systemctl enable vncserver-x11-serviced 
+sudo vncpasswd -service 
+# <type password>
+echo "Authentication=VncAuth" >> /etc/vnc/config.d/common.custom
+sudo systemctl restart vncserver-x11-serviced
+
+# You can now connect using the free viewer app at https://www.realvnc.com/en/connect/download/viewer/
+# which asks you to create an account and sign in, but allows you to operate without that.
+
+##################################################
+# Emacs w/ markdown mode
+sudo apt --yes install emacs
+echo "'(\"melpa-stable\" . \"https://stable.melpa.org/packages/\")) (package-initialize)" > ~/.emacs
+emacs --batch --eval "(package-install 'markdown-mode)"
+
+##################################################
 # git
 
 # git config needed for push
 git config --global user.name "$NAME"
 git config --global user.email "$EMAIL"
+git config pull.rebase false
 
 # git LFS (do before cloning anything!)
 sudo apt install git-lfs
@@ -63,16 +86,6 @@ rm log2ram.tar.gz
 ##################################################
 # Add the current directory to the path
 printf "\nexport PATH=.:\$PATH\n" >> ~/.bashrc
-
-##################################################
-# Change hostname
-sudo hostname $NEW_HOSTNAME
-
-##################################################
-# Emacs w/ markdown mode
-sudo apt --yes install emacs
-echo "'(\"melpa-stable\" . \"https://stable.melpa.org/packages/\")) (package-initialize)" > ~/.emacs
-emacs --batch --eval "(package-install 'markdown-mode)"
 
 ##################################################
 # Game development tools
