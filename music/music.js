@@ -10,7 +10,7 @@ body { max-width: none }
 body, .md a { font-family: Arial }
 .md pre.tilde {font-size: 110%; background: #F8F8F0}
 .md h1:before, .md h2:before, .md h3:before, .md h4:before { content: none; }
-.md h1 {border-bottom: 2px solid #000}
+.md h1 {font-size: 115%; border-bottom: 2px solid #000}
 .md h2 {font-size: 110%; border-bottom: none}
 </style>
 <script>markdeepOptions={tocStyle:'short'}</script>
