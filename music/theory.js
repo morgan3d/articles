@@ -32,16 +32,19 @@ function write_notes(name, note_array, offset = 0, key = 0) {
 
 
 for (let key = 0; key < 12; ++key) {
-    document.write('\n## Key of ' + note_name_array[key] + '\n');
+    const key_name = note_name_array[key];
+    const rel_minor_name = note_name_array[(key + 9) % note_name_array.length];
+    
+    document.write('\n## Key of ' + key_name + '\n');
     for (let m = 0; m < mode_array.length; ++m) {
         write_notes(note_name_array[(major_scale[m] + key) % note_name_array.length] + ' ' + mode_array[m], major_scale, m, key);
     }
     
-    write_notes(note_name_array[0] + ' Pentatonic Major', pentatonic_scale, 0, key);
-    write_notes(note_name_array[9] + ' Pentatonic Minor', pentatonic_scale, 9, key);
+    write_notes(key_name + ' Pentatonic Major', pentatonic_scale, 0, key);
+    write_notes(rel_minor_name + ' Pentatonic Minor', pentatonic_scale, 9, key);
     
-    write_notes(note_name_array[0] + ' Major Blues', major_blues_scale, 0, key);
-    write_notes(note_name_array[9] + ' Minor Blues', minor_blues_scale, 0, key);
-    write_notes(note_name_array[0] + ' Harmonic Major', harmonic_major_scale, 0, key);
-    write_notes(note_name_array[9] + ' Harmonic Minor', harmonic_minor_scale, 0, key);
+    write_notes(key_name + ' Major Blues', major_blues_scale, 0, key);
+    write_notes(rel_minor_name + ' Minor Blues', minor_blues_scale, 0, key);
+    write_notes(key_name + ' Harmonic Major', harmonic_major_scale, 0, key);
+    write_notes(rel_minor_name + ' Harmonic Minor', harmonic_minor_scale, 0, key);
 }
