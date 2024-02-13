@@ -14,7 +14,6 @@ const harmonic_minor_scale = [9, 11, 0, 2, 4, 5, 8];
 const major_blues_scale = [0, 2, 3, 4, 7, 9];
 const minor_blues_scale = [9, 0, 2, 3, 4, 7];
 
-
 const mode_array = ['Major / Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Minor / Aeolian', 'Locrian']
 
 // offset is the offset in the scale for modes
@@ -32,10 +31,27 @@ function write_notes(name, note_array, offset = 0, key = 0) {
 
 
 for (let key = 0; key < 12; ++key) {
-    const key_name = note_name_array[key];
+    const key_name = note_name_array[key].trim();
     const rel_minor_name = note_name_array[(key + 9) % note_name_array.length];
     
     document.write('\n## Key of ' + key_name + '\n');
+
+    {
+        let s = '*Primary Chords:* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+
+        // Negative is minor. Nonnegative is major, which is also the 1-4-5 chords
+        const chord_array = [0, -2, -4, 5, 7, -9];
+
+        for (const c of chord_array) {
+            s += '&nbsp;&nbsp; ' + (c >= 0 ? '*' : '') + note_name_array[(Math.abs(c) + key) % note_name_array.length].trim() + (c < 0 ? 'm' : '*'); 
+        }
+
+        //C Dm Em F G Am
+        s += '\n\n';
+        document.write(s);
+    }
+
+    
     for (let m = 0; m < mode_array.length; ++m) {
         write_notes(note_name_array[(major_scale[m] + key) % note_name_array.length] + ' ' + mode_array[m], major_scale, m, key);
     }
