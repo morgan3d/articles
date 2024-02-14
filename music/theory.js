@@ -46,11 +46,12 @@ for (let key = 0; key < 12; ++key) {
             s += '&nbsp;&nbsp; ' + (c >= 0 ? '*' : '') + note_name_array[(Math.abs(c) + key) % note_name_array.length].trim() + (c < 0 ? 'm' : '*'); 
         }
 
-        //C Dm Em F G Am
+        // Explicitly add the single diminished at the end
+        s += '&nbsp;&nbsp; ' + note_name_array[(11 + key) % note_name_array.length].trim() + '°'; 
+
         s += '\n\n';
         document.write(s);
     }
-
     
     for (let m = 0; m < mode_array.length; ++m) {
         write_notes(note_name_array[(major_scale[m] + key) % note_name_array.length] + ' ' + mode_array[m], major_scale, m, key);
