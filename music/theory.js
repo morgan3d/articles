@@ -64,3 +64,48 @@ for (let key = 0; key < 12; ++key) {
     write_notes(key_name + ' Harmonic Major', harmonic_major_scale, 0, key);
     write_notes(rel_minor_name + ' Harmonic Minor', harmonic_minor_scale, 0, key);
 }
+
+
+
+document.write('\n# Chord Names\n\n');
+
+let s = '';
+const chord_table = {
+    'X':  [0, 4, 7],
+    'Xm':  [0, 3, 7],
+    'X5': [0, 7],
+    'Xsus (Xsus4)': [0, 5, 7],
+    'Xsus2': [0, 2, 7],
+    'X° (Xdim)': [0, 3, 6],
+    'X+ (Xaug)': [0, 4, 8],
+    'X7': [0, 4, 7, 10],
+    'Xmaj7, XM7': [0, 4, 7, 11],
+    'Xm7': [0, 3, 7, 10],
+    'Xadd9': [0, 2, 4, 7],
+    'Xadd4 (Xadd11)': [0, 4, 5, 7],
+    'X°7 (Xdim7)': [0, 3, 6, 9],
+    'Xmaj6 (XM6)': [0, 4, 7, 9],
+    'XmM7': [0, 3, 7, 11],
+    'X9': [0, 2, 4, 7, 10],
+    'Xm6': [0, 3, 7, 9, 10]
+};
+
+for (let root = 0; root < 12; ++root) {
+    
+    const root_name = note_name_array[root].trim();
+
+    s += '## ' + root_name + '\n\n';
+    
+    for (const type in chord_table) {
+        
+        s += type.replaceAll('X', root_name) + '\n: `';
+        
+        const chord = chord_table[type];
+        for (let note of chord) {
+            s += note_name_array[(root + note) % note_name_array.length] + ' ';
+        }
+        s += '`\n\n';
+    }
+}
+
+document.write(s);
