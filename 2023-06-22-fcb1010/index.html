@@ -298,8 +298,11 @@ CNT
 : Send a MIDI Control Change message for this channel (which the FCB
   calls a "controller", hence the CNT abbreviation). The value entered
   is the channel. Historically there were specific controllers
-  hardcoded, such as 07 = volume. CNT 1 is always transmitted when a
-  NOTE is specified.
+  hardcoded, such as 07 = volume, 11 = expression. This is fully remappable in a modern
+  DAW. Note that for the FCB, CNT 1 is always
+  transmitted when a NOTE is specified, which is why I set it to the bogus value channel 127 
+  value 127
+  when also sending a note.
 
 VAL
 : The value payload of the MIDI Control Change message.
