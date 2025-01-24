@@ -1,6 +1,6 @@
            <meta charset="utf-8" emacsmode="-*- markdown -*-">
                 **FCB1010 as a DAW MIDI Controller**
-                Published 2023-06-22; Updated 2023-07-08
+              Published 2023-06-22; Updated 2025-01-23
 
 ![ ](fcb1010.png)
 
@@ -24,9 +24,11 @@ Singular Sound MIDI Maestro and Yamaha MFC10 both look great. The
 Roland FC-300 looks like a more expensive version of the FCB1010 with
 fewer explicit buttons.
 
-I wrote this manual to save you the hours of reading multiple manuals,
+I wrote this article to save you the hours of reading multiple manuals,
 watching videos, installing software, and experimenting with the
 device that it took me to understand and configure it.
+
+See also the [original manual](https://mediadl.musictribe.com/media/PLM/data/docs/P0089/FCB1010_P0089_M_EN.pdf) for the FCB1010.
 
 !!! Note Custom Firmware
     Note that there is [custom firmware](https://www.fcb1010.eu/) for FCB1010 that
@@ -35,9 +37,10 @@ device that it took me to understand and configure it.
     lights into stompbox style toggles per-pedal instead of showing the last-pressed
     pedal, and reconfiguring any buttons for sustain (momentary) mode instead of toggle
     mode. These are all great features and I'd like to have them. However, I haven't
-    replaced my own device's firmware. That's primarily because as of
-    2023, the folks who maintain it are dropping support and I don't
-    want to get stuck. A secondary reason is that keeping factory
+    replaced my own device's firmware. Because there's been some handoffs 
+    of ownership 2023-2025 of this unofficial firmware and I don't want to get stuck
+    (or deal with some of the configuration programming, which is very confusing and hardcore!) 
+    A secondary reason is that keeping factory
     firmware makes it easier for me to configure MIDI software that will
     work for others with new, "out of the box" devices.
 
@@ -97,10 +100,10 @@ change to new values between the verse, chorus, and solo sections of a
 song. Each of those song parts is one "preset" configuration for your
 devices.
 
-The FCB1010 will change all of the devices simultaneously when the
+The FCB1010 will change _all_ of the devices simultaneously when the
 corresponding preset is selected. This means that you do not have to
-change multiple settings on multiple devices manually as you move through each
-part of the song.
+change multiple settings on multiple devices manually as you move
+through each part of the song.
 
 In this context, the function of the FCB1010 is for selecting one of
 100 preset configurations for controlling these other devices. Each
@@ -136,18 +139,19 @@ each. They can be configured for sending individual Program Change
 messages to 5 devices, plus two control change messages, plus one note
 message, plus change the binary status of each of two external switch
 values, plus changing the range and controller number of the expression
-pedals.
+pedals. When a foot button is pressed, all eight of these messages are
+sent if they are configured.
 
-It can be used with a DAW by entering MIDI mapping mode on the DAW,
-selecting a bank, and then pressing the button for a desired command.
+The FCB1010 can be used with a DAW by entering MIDI mapping mode on
+the DAW, selecting a bank, and then pressing the button for a desired
+command.
 
-Because it was not designed as a general purpose controller, one
-limitation of the FCB1010 is that only one button can be pressed at
-once. Another artifact of its origin is that the last button pressed
+An artifact of the device's origin is that the last button pressed
 will remain lit, and will affect the functioning of the expression
-pedals. There are several alternative firmware chips that you 
-can buy to remove these traditional limitations. See https://www.fcb1010.eu
-for information on the most popular ones.
+pedals unless you explicitly configure them to operate the same
+following each pedal. There are several alternative firmware chips
+that you can buy to remove these traditional limitations. See
+https://www.fcb1010.eu for information on the most popular ones.
 
 The FCB1010 stores the preset configurations in non-volatile memory,
 so that they persist when power is removed.
@@ -178,11 +182,11 @@ Configuring
 ==========================================================================
 
 You do not need to configure the FCB1010 to work with a DAW or synth
-that has MIDI learning...unless your DAW, like Ableton, does not accept
-the generic Program Change messages that FCB1010 sends out of the box
-and instead needs Control Change and Note messages.
-You would also need to configure it if working
-with a device that expects _specific_ MIDI messages as inputs.
+that has MIDI learning...unless your DAW, like Ableton, does not
+accept the generic Program Change messages that FCB1010 sends out of
+the box and instead needs Control Change and Note messages.  You would
+also need to configure it if working with a device that expects
+_specific_ MIDI messages as inputs.
 
 The easy way to configure it is by using 3rd party software that sends SysEx
 messages. The
@@ -208,7 +212,7 @@ programming as well.
 through specifically configuring FCB1010 for Ableton.
 
 
-Ableton via Mountain
+Ableton Configuration via Mountain
 =================================================================
 To configure the FCB1010 via the 
 [Mountain Utilities FCB1010 Manager](https://mountainutilities.eu/fcb1010)
@@ -217,21 +221,23 @@ for [Ableton Live](https://www.ableton.com/en/live/):
 1. Install the [Manager](https://mountainutilities.eu/fcb1010)
 2. Close all other MIDI programs
 3. Power off the FCB1010
-4. *Disconnect the MIDI In* port _on the FCB1010_ (not the device's out port that goes
+4. *Disconnect the port labelled MIDI In* _on the FCB1010_ (not the device's out port that goes
    to your adapter's MIDI In)
-5. Run the Manager
+5. Run the Manager software
 6. Press the red MIDI port icon on the Manager. It will bring up a dialog
-       explaining the following steps.
+   explaining the following steps.
 7. Hold down the Down pedal and power up the FCB1010 with it held down
 8. After the green Direct Select LED lights up, release the Down button
 9. Tap the Down button. The green Config LED will now light up
 10. Tap the 6 pedal
 11. Press OK on the dialog that appears. You will now be looking at
    the current state of your FCB1010 in the Manager
-12. In the Manager, press the Show Presets grid icon, and then map the buttons as shown in the table below using the editor, or just load them from my [config file](fcb1010-ableton.syx download).
+12. In the Manager, press the Show Presets grid icon, and then map the buttons as 
+    shown in the table below using the editor, or just load them from my 
+    [config file](fcb1010-ableton.syx download).
 13. Press the green MIDI icon to send this configuration to the device, which
-   will then tell you to complete the following steps in a dialog.
-14. Connect the MIDI In port to your cable (this is what you
+    will then tell you to complete the following steps in a dialog.
+14. Connect the MIDI In port to your cable's MIDI Out (this is what you
     previously disconnected)
 15. Tap the 7 pedal
 16. Look at the green Config LED on the device and
@@ -249,16 +255,16 @@ in the same way as any other device.
 
    Preset | SW 1 | SW 2 | PC 1 | PC 2 | PC 3 | CNT 1 | Val 1 | CNT 2 | Val 2 | PC 5 | NOTE | Exp A | Min A | Max A | EXP B | Min B | Max B
    -------|------|------|------|------|------|-------|-------|-------|-------|------|------|-------|-------|-------|-------|-------|-------
-   0:1    |      |      |      |      |      |       |       |       |       |      | 0    |27     |0      |127    | 28    | 0     | 127
-   0:2    |      |      |      |      |      |       |       |       |       |      | 1    |27     |0      |127    | 28    | 0     | 127
-   0:3    |      |      |      |      |      |       |       |       |       |      | 2    |27     |0      |127    | 28    | 0     | 127
-   0:4    |      |      |      |      |      |       |       |       |       |      | 3    |27     |0      |127    | 28    | 0     | 127
-   0:5    |      |      |      |      |      |       |       |       |       |      | 4    |27     |0      |127    | 28    | 0     | 127
-   0:6    |      |      |      |      |      |       |       |       |       |      | 5    |27     |0      |127    | 28    | 0     | 127
-   0:7    |      |      |      |      |      |       |       |       |       |      | 6    |27     |0      |127    | 28    | 0     | 127
-   0:8    |      |      |      |      |      |       |       |       |       |      | 7    |27     |0      |127    | 28    | 0     | 127
-   0:9    |      |      |      |      |      |       |       |       |       |      | 8    |27     |0      |127    | 28    | 0     | 127
-   1:10   |      |      |      |      |      |       |       |       |       |      | 9    |27     |0      |127    | 28    | 0     | 127
+   0:1    |      |      |      |      |      | 127   | 127   |       |       |      | 0    |27     |0      |127    | 28    | 0     | 127
+   0:2    |      |      |      |      |      | 127   | 127   |       |       |      | 1    |27     |0      |127    | 28    | 0     | 127
+   0:3    |      |      |      |      |      | 127   | 127   |       |       |      | 2    |27     |0      |127    | 28    | 0     | 127
+   0:4    |      |      |      |      |      | 127   | 127   |       |       |      | 3    |27     |0      |127    | 28    | 0     | 127
+   0:5    |      |      |      |      |      | 127   | 127   |       |       |      | 4    |27     |0      |127    | 28    | 0     | 127
+   0:6    |      |      |      |      |      | 127   | 127   |       |       |      | 5    |27     |0      |127    | 28    | 0     | 127
+   0:7    |      |      |      |      |      | 127   | 127   |       |       |      | 6    |27     |0      |127    | 28    | 0     | 127
+   0:8    |      |      |      |      |      | 127   | 127   |       |       |      | 7    |27     |0      |127    | 28    | 0     | 127
+   0:9    |      |      |      |      |      | 127   | 127   |       |       |      | 8    |27     |0      |127    | 28    | 0     | 127
+   1:10   |      |      |      |      |      | 127   | 127   |       |       |      | 9    |27     |0      |127    | 28    | 0     | 127
    1:1    |      |      |      |      |      | 22    | 127   |       |       |      |      |27     |0      |127    | 28    | 0     | 127
    1:2    |      |      |      |      |      | 23    | 127   |       |       |      |      |27     |0      |127    | 28    | 0     | 127
    1:3    |      |      |      |      |      | 24    | 127   |       |       |      |      |27     |0      |127    | 28    | 0     | 127
@@ -276,9 +282,43 @@ off like a stomp box), and bank 1 store momentary controls (which is
 not as useful in a DAW since FCB cannot separate press and release
 with default firmware). 
 
-I left EXP A on CC27, which is the default
-for it, but changed EXP B to CC28 since Ableton only recognizes
-CC22-31 and CC84-90 (I have no idea why).
+I left EXP A on CC27, which is the default for it, but changed EXP B
+to CC28 since Ableton only recognizes CC22 through CC31 and CC84
+through CC90 (I have no idea why).
+
+In the FCB/MIDI jargon, the abbreviations for the columns mean:
+
+SW
+: Switch. Mapping to a switch on an amplifier, for example
+
+PC
+: MIDI Program Change message
+
+CNT
+: Send a MIDI Control Change message for this channel (which the FCB
+  calls a "controller", hence the CNT abbreviation). The value entered
+  is the channel. Historically there were specific controllers
+  hardcoded, such as 07 = volume. CNT 1 is always transmitted when a
+  NOTE is specified.
+
+VAL
+: The value payload of the MIDI Control Change message.
+
+NOTE
+: Send a MIDI Note-On 64 message with the specified note number when
+  the button is pressed for this preset, and MIDI Note-on 0 when it is
+  released. The number entered in the table is the MIDI note number
+  0-127 where 0 is a Scientific Pitch C2 and 127 is G8.
+
+EXP
+: Expression pedal's MIDI Control Channel that will be used when this preset
+  is active.
+
+Min
+: Minimum value for the MIDI Control Change message when this preset is active.
+
+Max
+: Minimum value for the MIDI Control Change message when this preset is active.
 
 Initial Configuration
 =================================================================
